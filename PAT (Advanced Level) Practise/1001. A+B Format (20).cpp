@@ -1,9 +1,16 @@
-#include <cstdio>
+/**
+* 考点：字符串处理
+* 分析：入门题型
+*       注意用while的写法将整数存入数组时，要单独处理0这个特殊数据
+*       以及按题目要求末尾不要逗号
+**/
 
-int num[10];
+#include <cstdio>
 
 int main() {
     int a, b, sum;
+    int num[10];
+    int len = 0; //len存放sum的长度
     scanf("%d%d", &a, &b);
     sum = a + b; //将a+b赋值给sum
     if(sum < 0) {
@@ -11,7 +18,6 @@ int main() {
         printf("-");
         sum = -sum;
     }
-    int len = 0; //len存放sum的长度
     if(sum == 0)
         num[len++] = 0; //sum为0时特殊处理
     //将sum存入数组num[]中，其中sum的低位存放到num[]的低位
