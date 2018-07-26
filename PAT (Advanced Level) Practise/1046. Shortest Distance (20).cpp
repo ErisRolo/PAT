@@ -1,34 +1,63 @@
+/**
+* 分析：一般做法会超时，因为每次查询都需要遍历整个数组
+*       10^5次操作，10^4次遍历，极端情况下会有10^9次操作导致超出100ms时间限制
+*       可以用A[i]数组表示1号结点按顺时针方向到达“i号结点顺时针方向的下一个结点”的距离
+*       然后用差值表示两个结点间的距离，A[i]所代表的距离可以在输入时预处理得到，从而避免超时
+*       学会用差值表示距离并预处理的方法
+*       哎我也不知道怎么能想到超时和这种做法，多刷多积累吧。。。
+**/
+
 #include <cstdio>
 #include <algorithm>
-
 using namespace std;
+const int maxn = 100005;
 
-int N, M;
-int s = 0;
-int sum[100010] = {0};
-
-void get_result(int a, int b) {
-    if(a > b)
-        swap(a, b);
-    int d1 = sum[b] - sum[a];
-    int d2 = s - d1;
-    printf("%d\n", min(d1, d2));
-}
 int main() {
-    scanf("%d", &N);
-    int tmp;
-    for(int i = 2; i <= N; i++) {
-        scanf("%d", &tmp);
-        s += tmp;
-        sum[i] = s;
+    int n, query, src, des, tmp, sum = 0;
+    int A[maxn]; //A[i]表示1号结点按顺时针方向到达“i号结点顺时针方向的下一个结点”的距离
+    int D[maxn]; //D[i]表示第i个点和第i+1点之间的距离
+    scanf("%d", &n);
+    for(int i = 1; i <= n; i++) {
+        scanf("%d", &D[i]);
+        sum += D[i];
+        A[i] = sum;
     }
-    scanf("%d", &tmp); // tmp 最后表示 第一个到最后一个的距离
-    s += tmp;
-    scanf("%d", &M);
-    for(int i = 0; i < M; i++) {
-        int a, b;
-        scanf("%d %d", &a, &b);
-        get_result(a, b);
+    scanf("%d", &query);
+    //这个循环里面比一般做法少了一个循环，因为预处理了，可以避免超时
+    for(int i = 0; i < query; i++) {
+        scanf("%d%d", &src, &des);
+        if(src > des)
+            swap(src, des);
+        tmp = A[des - 1] - A[src - 1];
+        printf("%d\n", min(tmp, sum - tmp));
     }
     return 0;
 }
+
+/*
+    一般做法会超时，扣三分。。。
+
+    int main() {
+        int N, M, src, des, tmp, dis = 0, sum = 0;
+        int D[maxn]; //D[i]表示第i个点和第i+1点之间的距离
+        scanf("%d", &N);
+        for(int i = 1; i <= N; i++) {
+            scanf("%d", &D[i]);
+            sum += D[i];
+        }
+        scanf("%d", &M);
+        for(int i = 0; i < M; i++) {
+            scanf("%d%d", &src, &des);
+            if(src > des)
+                swap(src, des);
+            for(int j = src; j < des; j++) {
+                dis += D[j];
+            }
+            printf("%d\n", min(dis, sum - dis));
+            dis = 0;
+        }
+        return 0;
+    }
+*/
+
+
