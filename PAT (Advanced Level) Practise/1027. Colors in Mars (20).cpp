@@ -1,58 +1,78 @@
-/* 1027. Colors in Mars (20) 
+/**
+* 分析：要求将三个0-168的十进制数转换为13进制数，同时前面加#，不足两位要补0
+*       直接套进制转换的模板，除基取余即可，最后注意控制输出格式就好，输出格式的不同情形要考虑全
+*       此题晴神宝典还有更好的方法，因为范围为[0,168]，所以整数一定可以表示为x = a * 13^1 + b * 13^0
+*       对上面的整式同时整除13，可得x / 13 = a；两边同时对13取模，可得x % 13 = b
+*       最后用char型数组表示数字与字符的对应关系（一定要学会这种用数组输出对应关系的技巧！！！）
+*       输出a、b即可，如下
+**/
 
-People in Mars represent the colors in their computers in a similar way as the Earth people. That is, a color is represented by a 6-digit number, where the first 2 digits are for Red, the middle 2 digits for Green, and the last 2 digits for Blue. The only difference is that they use radix 13 (0-9 and A-C) instead of 16. Now given a color in three decimal numbers (each between 0 and 168), you are supposed to output their Mars RGB values.
-
-Input
-
-Each input file contains one test case which occupies a line containing the three decimal color values.
-
-Output
-
-For each test case you should output the Mars RGB value in the following format: first output "#", then followed by a 6-digit number where all the English characters must be upper-cased. If a single color is only 1-digit long, you must print a "0" to the left.
-
-Sample Input
-15 43 71
-Sample Output
-#123456 */
-
-#include <iostream>
 #include <cstdio>
-#include <vector>
-#include <string>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <algorithm>
 
-using namespace std;
+//建立0-13与'0'-'9'、'A'、'B'、'C'的关系
+char radix[13] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C'};
 
-vector<char> get_result(int n){
-    vector<char> vec;
-    if(n == 0) vec.push_back('0');
-    while(n != 0){
-        int x = n % 13;
-        if(x <10 ) vec.push_back(x+'0');
-        else vec.push_back(x - 10 +'A');
-        n /= 13; 
-    }
-    return vec;
-}
-
-int main(){
+int main() {
     int r, g, b;
-    cin >> r >> g >> b;
-    vector<char> vr = get_result(r);
-    vector<char> vg = get_result(g);
-    vector<char> vb = get_result(b);
-    cout << "#";
-    if(vr.size() < 2) cout << "0" << vr[0];
-    else cout << vr[1] << vr[0];
-
-    if(vg.size() < 2) cout << "0" << vg[0];
-    else cout << vg[1] << vg[0];
-
-    if(vb.size() < 2) cout << "0" << vb[0];
-    else cout << vb[1] << vb[0];
+    scanf("%d %d %d", &r, &g, &b);
+    printf("#");
+    printf("%c%c", radix[r / 13], radix[r % 13]);
+    printf("%c%c", radix[g / 13], radix[g % 13]);
+    printf("%c%c", radix[b / 13], radix[b % 13]);
     return 0;
 }
+
+/*
+    一般做法，很麻烦。。。
+
+    const int maxn = 2;
+
+    //输出只有一位时补0并转换
+    void printOne(int d) {
+        if(d < 10)
+            printf("0%d", d);
+        else if(d == 10)
+            printf("0A");
+        else if(d == 11)
+            printf("0B");
+        else if(d == 12)
+            printf("0C");
+    }
+
+    //输出两位时的转换
+    void printTwo(int d) {
+        if(d < 10)
+            printf("%d", d);
+        else if(d == 10)
+            printf("A");
+        else if(d == 11)
+            printf("B");
+        else if(d == 12)
+            printf("C");
+    }
+
+    //10进制数转13进制数并输出
+    void toThree (int d) {
+        int D[maxn], num = 0;
+        do {
+            D[num++] = d  %  13; //除基取余
+            d = d / 13;
+        } while(d != 0);
+        if(num == 1) {
+            printOne(D[0]);
+        } else {
+            printTwo(D[1]);
+            printTwo(D[0]);
+        }
+    }
+
+    int main() {
+        int r, g, b;
+        scanf("%d %d %d", &r, &g, &b);
+        printf("#");
+        toThree(r);
+        toThree(g);
+        toThree(b);
+        return 0;
+    }
+*/
