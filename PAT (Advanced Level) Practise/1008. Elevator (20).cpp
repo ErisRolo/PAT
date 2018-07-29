@@ -1,18 +1,22 @@
+/**
+* 分析：简单题，直译即可，希望9.8PAT出这种难度的。。。
+**/
+
 #include <cstdio>
 
 int main() {
-    int n, total = 0, now = 0, to;
-    scanf("%d", &n);
-    for(int i = 0; i < n; i++) {
+    int N;
+    int now = 0, to, time = 0;
+    scanf("%d", &N);
+    for(int i = 0; i < N; i++) {
         scanf("%d", &to);
         if(to > now) {
-            total += ((to - now) * 6);
+            time += 6 * (to - now) + 5;
         } else {
-            total += ((now - to) * 4);
+            time += 4 * (now - to) + 5;
         }
-        total += 5;
         now = to;
     }
-    printf("%d\n", total);
+    printf("%d", time);
     return 0;
 }
