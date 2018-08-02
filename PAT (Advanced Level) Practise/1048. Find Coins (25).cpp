@@ -1,58 +1,64 @@
-/* 1048. Find Coins (25)
-
-Eva loves to collect coins from all over the universe, including some other planets like Mars. One day she visited a universal shopping mall which could accept all kinds of coins as payments. However, there was a special requirement of the payment: for each bill, she could only use exactly two coins to pay the exact amount. Since she has as many as 105 coins with her, she definitely needs your help. You are supposed to tell her, for any given amount of money, whether or not she can find two coins to pay for it.
-
-Input Specification:
-
-Each input file contains one test case. For each case, the first line contains 2 positive numbers: N (<=105, the total number of coins) and M(<=103, the amount of money Eva has to pay). The second line contains N face values of the coins, which are all positive numbers no more than 500. All the numbers in a line are separated by a space.
-
-Output Specification:
-
-For each test case, print in one line the two face values V1 and V2 (separated by a space) such that V1 + V2 = M and V1 <= V2. If such a solution is not unique, output the one with the smallest V1. If there is no solution, output "No Solution" instead.
-
-Sample Input 1:
-8 15
-1 2 8 7 2 4 11 15
-Sample Output 1:
-4 11
-Sample Input 2:
-7 14
-1 8 7 2 4 11 15
-Sample Output 2:
-No Solution */
+/**
+* 分析：一般做法会超时
+*       晴神宝典要求用散列法、二分查找及two pointers方法分别实现一次。。。
+*       散列法注意数组大小并不需要开到10^5，因为数据不会超过10^3
+*       还要注意i == m-i的情况
+*       不知道为啥hash数组必须写在main函数外面，不然会有一个错误，少得2分。。。
+**/
 
 #include <cstdio>
-#include <vector>
-#include <algorithm>
+const int maxM = 1001;
 
-using namespace std;
+int hash[maxM];
 
-int n, x;
-vector<int> vec;
-
-int hashTable[100100] = {0};
-int main(){
-    scanf("%d %d", &n, &x);
-    for(int i = 0; i < n; i++){
-        int tmp;
-        scanf("%d", &tmp);
-        hashTable[tmp]++;
-        vec.push_back(tmp);
+int main() {
+    int N, M, temp, flag;
+    scanf("%d %d", &N, &M);
+    for(int i = 0; i < N; i++) {
+        scanf("%d", &temp );
+        hash[temp]++;
     }
-    sort(vec.begin(), vec.end());    
-    for(int i = 0; i < vec.size(); i++){
-        int value = vec[i];
-        int value2 = x - vec[i];
-        if(value < value2 && hashTable[value2] != 0){
-            printf("%d %d", value, value2);
-            return 0;
+    for(int i = 1; i < M; i++) {
+        if(hash[i] && hash[M - i] ) {
+            if(i == M - i && hash[i] > 1) {
+                printf("%d %d\n", i, M - i);
+                break;
+            } else if(i != M - i) {
+                printf("%d %d\n", i, M - i);
+                break;
+            }
         }
-        else if(value==value2 && hashTable[value] > 1){
-            printf("%d %d", value, value2);
-            return 0;
-        }
+        flag = i;
     }
-    printf("No Solution");
-
+    if(flag == M - 1)
+        printf("No Solution\n");
     return 0;
 }
+
+/*
+    一般做法会超时
+
+    int main() {
+        int N, M;
+        scanf("%d %d", &N, &M);
+        int V[N + 1], V1, V2, flag;
+        for(int i = 0; i < N; i++) {
+            scanf("%d", &V[i]);
+        }
+        for(int i = 0; i < N; i++) {
+            for(int j = i + 1; j < N; j++) {
+                if(V[i] + V[j] == M) {
+                    V1 = V[i];
+                    V2 = V[j];
+                    break;
+                    break;
+                }
+            }
+        }
+        if(flag == N - 1)
+            printf("No Solution");
+        else
+            printf("%d %d", V1, V2);
+        return 0;
+    }
+*/
