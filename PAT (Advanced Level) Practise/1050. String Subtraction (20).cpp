@@ -1,46 +1,25 @@
-/* 1050. String Subtraction (20)
-
-Given two strings S1 and S2, S = S1 - S2 is defined to be the remaining string after taking all the characters in S2 from S1. Your task is simply to calculate S1 - S2 for any given strings. However, it might not be that simple to do it fast.
-
-Input Specification:
-
-Each input file contains one test case. Each case consists of two lines which gives S1 and S2, respectively. The string lengths of both strings are no more than 104. It is guaranteed that all the characters are visible ASCII codes and white space, and a new line character signals the end of a string.
-
-Output Specification:
-
-For each test case, print S1 - S2 in one line.
-
-Sample Input:
-They are students.
-aeiou
-Sample Output:
-Thy r stdnts. */
+/**
+* 分析：给定两个字符串，在第一个字符串中删掉第二个字符串中出现过的所有字符，想到用散列
+*       注意此题不能用scanf，因为scanf读取字符串是用空格作为截断标志，无法一次读取一整行带有空格的字符串
+*       又因为gets被禁用，所以使用getline替代，同时用string替代char数组，用string.size()替代strlen(char[])
+**/
 
 #include <cstdio>
-#include <iostream>
 #include <cstring>
-#include <string>
-#include <vector>
-
+#include <iostream>
 using namespace std;
 
-string s;
-string m;
-int h[200] = {0};
-int main(){
-    // gets(s);
-    getline(cin, s);
-    getline(cin, m);
-    for(int i = 0; i < s.size(); i++){
-        h[s[i]] = 1;
+int main() {
+    bool hash[128] = {false};
+    string s1, s2;
+    getline(cin, s1);
+    getline(cin, s2);
+    for(int i = 0; i < s2.size(); i++) {
+        hash[s2[i]] = true;
     }
-    for(int i =0; i < m.size(); i++){
-        h[m[i]] = 0;
-    }
-    for(int i = 0; i < s.size(); i++){
-        if(h[s[i]] == 1){
-            printf("%c", s[i]);
-        } 
+    for(int i = 0; i < s1.size(); i++) {
+        if(hash[s1[i]] == false)
+            printf("%c", s1[i]);
     }
     return 0;
 }
