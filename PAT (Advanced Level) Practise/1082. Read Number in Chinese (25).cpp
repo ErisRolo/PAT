@@ -1,53 +1,53 @@
+/**
+* 分析：按中文发音输出9位数以内的整数，有点难，而且意义不大，看懂晴神代码算了，不耽误时间
+**/
+
+#include <cstdio>
+#include <cstring>
 #include <iostream>
-#include <string>
-#include <vector>
 using namespace std;
 
-string num[10] = { "ling", "yi", "er", "san", "si", "wu", "liu", "qi", "ba", "jiu" };
-string c[6] = { "Ge", "Shi", "Bai", "Qian", "Yi", "Wan" };
-int J[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
-vector<string> res;
+string num[10] = {"ling", "yi", "er", "san", "si", "wu", "liu", "qi", "ba", "jiu"}; //num[0]="ling",...
+string wei[5] = {"Shi", "Bai", "Qian", "Wan", "Yi"}; //Wei[0]="Shi",...
 
 int main() {
-    int n;
-    cin >> n;
-    if (n == 0) {
-        cout << "ling";
-        return 0;
+    string str;
+    cin >> str; //按字符串方式输入数字
+    int len = str.size();
+    int left = 0, right = len - 1; //left与right分别指向字符串首尾元素
+    if(str[0] == '-') {
+        cout << "Fu";
+        left++; //负数把left右移1位
     }
-    if (n < 0) {
-        cout << "Fu ";
-        n = -n;
+    while(left + 4 <= right) {
+        right -= 4; //将right每次左移4位，直到left与right在同一节
     }
-    int part[3];
-    part[0] = n / 100000000;
-    part[1] = (n % 100000000) / 10000;
-    part[2] = n % 10000;
-    bool zero = false; //是否在非零数字前输出合适的ling
-    int printCnt = 0; //用于维护单词前没有空格，之后输入的单词都在前面加一个空格。
-    for (int i = 0; i < 3; i++) {
-        int temp = part[i]; //三个部分，每部分内部的命名规则都一样，都是X千X百X十X
-        for (int j = 3; j >= 0; j--) {
-            int curPos = 8 - i * 4 + j; //当前数字的位置
-            if (curPos >= 9)
-                continue; //最多九位数
-            int cur = (temp / J[j]) % 10;//取出当前数字
-            if (cur != 0) {
-                if (zero) {
-                    printCnt++ == 0 ? cout << "ling" : cout << " ling";
-                    zero = false;
+    while(left < len) { //循环每次处理数字的一节(4位或小于4位)
+        bool flag = false; //flag==false表示没有累积的0
+        bool isPrint = false; //isPrint==false表示该节没有输出过其中的位
+        while(left <= right) { //从左至右处理数字中某节的每一位
+            if(left > 0 && str[left] == '0') { //如果当前位为0
+                flag = true;
+            } else { //如果当前位不为0
+                if(flag == true) { //如果存在累积的0
+                    printf(" ling");
+                    flag = false;
                 }
-                if (j == 0)
-                    printCnt++ == 0 ? cout << num[cur] : cout << ' ' << num[cur]; //在个位，直接输出
-                else
-                    printCnt++ == 0 ? cout << num[cur] << ' ' << c[j] : cout << ' ' << num[cur] << ' ' << c[j]; //在其他位，还要输出十百千
-            } else {
-                if (!zero && j != 0 && n / J[curPos] >= 10)
-                    zero = true;   //注意100020这样的情况
+                if(left > 0) { //只要不是首位（包括负号），后面的每一位前都要输出空格
+                    cout << " ";
+                }
+                cout << num[str[left] - '0']; //输出当前位数字
+                isPrint = true; //该节至少有一位被输出
+                if(left != right) { //某节中除了个位外，都需要输出十百千
+                    cout << " " << wei[right - left - 1];
+                }
             }
+            left++; //left右移1位
         }
-        if (i != 2 && part[i] > 0)
-            cout << ' ' << c[i + 4]; //处理完每部分之后，最后输出单位，Yi/Wan
+        if(isPrint == true && right != len - 1) { //只要不是个位，就输出万或亿
+            cout << " " << wei[(len - 1 - right) / 4 + 2];
+        }
+        right += 4; //right右移4位，输出下一节
     }
     return 0;
 }
