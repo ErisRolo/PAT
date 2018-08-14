@@ -1,92 +1,113 @@
-/* 1039. Course List for Student (25)
+/**
+* 分析：37分钟，6个测试点通过了4个却只有8分，一个格式错误一个运行超时
+*       感觉自己脑子笨，，逻辑有问题。。。
+*       看了题解，发现逻辑差不多，正常思路是：读取每门课的所有选课学生，然后将课程编号加入选择这门课的学生中去
+*       只是这道题数据量大，使用cin、cout和map、string都会导致超时
+*       要用hash把学生姓名转换为int型存储到vector里
+*       此题年代久远，参考价值不大。。。
+*       不过要通过这道题学会vector的操作，尤其是二维数组
+**/
 
-Zhejiang University has 40000 students and provides 2500 courses. Now given the student name lists of all the courses, you are supposed to output the registered course list for each student who comes for a query.
-
-Input Specification:
-
-Each input file contains one test case. For each case, the first line contains 2 positive integers: N (<=40000), the number of students who look for their course lists, and K (<=2500), the total number of courses. Then the student name lists are given for the courses (numbered from 1 to K) in the following format: for each course i, first the course index i and the number of registered students Ni (<= 200) are given in a line. Then in the next line, Ni student names are given. A student name consists of 3 capital English letters plus a one-digit number. Finally the last line contains the N names of students who come for a query. All the names and numbers in a line are separated by a space.
-
-Output Specification:
-
-For each test case, print your results in N lines. Each line corresponds to one student, in the following format: first print the student's name, then the total number of registered courses of that student, and finally the indices of the courses in increasing order. The query results must be printed in the same order as input. All the data in a line must be separated by a space, with no extra space at the end of the line.
-
-Sample Input:
-11 5
-4 7
-BOB5 DON2 FRA8 JAY9 KAT3 LOR6 ZOE1
-1 4
-ANN0 BOB5 JAY9 LOR6
-2 7
-ANN0 BOB5 FRA8 JAY9 JOE4 KAT3 LOR6
-3 1
-BOB5
-5 9
-AMY7 ANN0 BOB5 DON2 FRA8 JAY9 KAT3 LOR6 ZOE1
-ZOE1 ANN0 BOB5 JOE4 JAY9 FRA8 DON2 AMY7 KAT3 LOR6 NON9
-Sample Output:
-ZOE1 2 4 5
-ANN0 3 1 2 5
-BOB5 5 1 2 3 4 5
-JOE4 1 2
-JAY9 4 1 2 4 5
-FRA8 3 2 4 5
-DON2 2 4 5
-AMY7 1 5
-KAT3 3 2 4 5
-LOR6 4 1 2 4 5
-NON9 0 */
-
-#include <iostream>
 #include <cstdio>
-#include <vector>
 #include <string>
-#include <map>
-#include <set>
+#include <iostream>
+#include <vector>
 #include <algorithm>
-
 using namespace std;
+const int N = 40010; //总人数
+const int M = 26 * 26 * 26 * 10 + 1; //由姓名散列成的数字上界
+vector<int> selectCourse[M]; //每个学生选择的课程编号
 
-int N, K;
-
-struct Stu
-{
-    vector<int> vec;
-} list[180000];
-
-int string2int(char s[5])
-{
-    return (s[0] - 'A') * 26 * 26 * 10 + (s[1] - 'A') * 26 * 10 + (s[2] - 'A') * 10 + (s[3] - '0');
+int getID(char name[]) {
+    int id = 0;
+    for(int i = 0; i < 3; i++) {
+        id = id * 26 + (name[i] - 'A');
+    }
+    id = id * 10 + (name[3] - '0');
+    return id;
 }
 
-int main()
-{
-    scanf("%d %d", &N, &K);
-    char tmp[5];
-    string s;
-    for (int i = 0; i < K; i++)
-    {
-        int course_id, num;
-        scanf("%d %d", &course_id, &num);
-        for (int j = 0; j < num; j++)
-        {
-            scanf("%s", tmp);
-            int index = string2int(tmp);
-            list[index].vec.push_back(course_id);
+int main() {
+    char name[5];
+    int n, k;
+    scanf("%d%d", &n, &k);
+    for(int i = 0; i < k; i++) {
+        int course, x;
+        scanf("%d%d", &course, &x);
+        for(int j = 0; j < x; j++) {
+            scanf("%s", name);
+            int id = getID(name);
+            selectCourse[id].push_back(course);
         }
     }
-
-    for (int i = 0; i < N; i++)
-    {
-        scanf("%s", tmp);
-        int index = string2int(tmp);
-        printf("%s %d", tmp, list[index].vec.size());
-        sort(list[index].vec.begin(), list[index].vec.end());
-        for (int j = 0; j < list[index].vec.size(); j++)
-        {
-            printf(" %d", list[index].vec[j]);
-        }
-        printf("\n");
+    for(int i = 0; i < n; i++) {
+        scanf("%s", name);
+        int id = getID(name);
+        sort(selectCourse[id].begin(), selectCourse[id].end()); //默认从小到大排序
+        printf("%s %d", name, selectCourse[id].size());
+        for(int j = 0; j < selectCourse[id].size(); j++)
+            printf(" %d", selectCourse[id][j]);
+        printf("\n"); //最后一行可以输出换行符
     }
-
     return 0;
 }
+
+/*
+
+struct Class {
+    int id;
+    int count;
+    vector<string> stu;
+};
+
+struct Student {
+    string name;
+    int count;
+    vector<int> cls;
+};
+
+int main() {
+    int n, k, temp;
+    int id, count;
+    string name;
+    scanf("%d %d", &n, &k);
+    temp = k;
+    Class cls[k];
+    Student stu[n];
+    while(temp--) {
+        scanf("%d %d", &id, &count);
+        cls[id - 1].id = id;
+        cls[id - 1].count = count;
+        while(count--) {
+            cin >> name;
+            cls[id - 1].stu.push_back(name);
+        }
+    }
+    for(int i = 0; i < n; i++) {
+        cin >> name;
+        stu[i].name = name;
+        stu[i].count = 0;
+        for(int j = 0; j < k; j++) {
+            for(vector<string>::iterator it = cls[j].stu.begin(); it != cls[j].stu.end(); it++) {
+                if(*it == name) {
+                    stu[i].cls.push_back(cls[j].id);
+                    stu[i].count++;
+                }
+            }
+        }
+    }
+    for(int i = 0; i < n; i++) {
+        cout << stu[i].name << " " << stu[i].count << " ";
+        for(vector<int>::iterator it = stu[i].cls.begin(); it != stu[i].cls.end(); it++) {
+            if(it != stu[i].cls.end() - 1)
+                cout << *it << " ";
+            else
+                cout << *it;
+        }
+        if(i != n - 1)
+            cout << endl;
+    }
+    return 0;
+}
+
+*/
