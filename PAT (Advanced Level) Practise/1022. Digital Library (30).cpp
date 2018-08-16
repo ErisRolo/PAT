@@ -1,212 +1,97 @@
-/* 1022. Digital Library (30)
+/**
+* 分析：考查STL的综合使用
+*       因为一个ID对应多个信息，题目要求根据除ID外任意信息进行查询，所以要使用map<string,set<int> >
+*       因为不同的信息可以对应多个ID，比如作者写了多本书，出版社出版了多本书，是多对多的关系，所以不能直接用int而是要用set<int>
+*       另外，卧槽踏马的这道题输入输出上全是坑，详情见代码注释
+*
+**/
 
-A Digital Library contains millions of books, stored according to their titles, authors, key words of their abstracts, publishers, and published years. Each book is assigned an unique 7-digit number as its ID. Given any query from a reader, you are supposed to output the resulting books, sorted in increasing order of their ID's.
-
-Input Specification:
-
-Each input file contains one test case. For each case, the first line contains a positive integer N (<=10000) which is the total number of books. Then N blocks follow, each contains the information of a book in 6 lines:
-
-Line #1: the 7-digit ID number;
-Line #2: the book title -- a string of no more than 80 characters;
-Line #3: the author -- a string of no more than 80 characters;
-Line #4: the key words -- each word is a string of no more than 10 characters without any white space, and the keywords are separated by exactly one space;
-Line #5: the publisher -- a string of no more than 80 characters;
-Line #6: the published year -- a 4-digit number which is in the range [1000, 3000].
-It is assumed that each book belongs to one author only, and contains no more than 5 key words; there are no more than 1000 distinct key words in total; and there are no more than 1000 distinct publishers.
-
-After the book information, there is a line containing a positive integer M (<=1000) which is the number of user's search queries. Then M lines follow, each in one of the formats shown below:
-
-1: a book title
-2: name of an author
-3: a key word
-4: name of a publisher
-5: a 4-digit number representing the year
-Output Specification:
-
-For each query, first print the original query in a line, then output the resulting book ID's in increasing order, each occupying a line. If no book is found, print"Not Found" instead.
-
-Sample Input:
-3
-1111111
-The Testing Book
-Yue Chen
-test code debug sort keywords
-ZUCS Print
-2011
-3333333
-Another Testing Book
-Yue Chen
-test code sort keywords
-ZUCS Print2
-2012
-2222222
-The Testing Book
-CYLL
-keywords debug book
-ZUCS Print2
-2011
-6
-1: The Testing Book
-2: Yue Chen
-3: keywords
-4: ZUCS Print
-5: 2011
-3: blablabla
-Sample Output:
-1: The Testing Book
-1111111
-2222222
-2: Yue Chen
-1111111
-3333333
-3: keywords
-1111111
-2222222
-3333333
-4: ZUCS Print
-1111111
-5: 2011
-1111111
-2222222
-3: blablabla
-Not Found
- */
-
-#include <iostream>
 #include <cstdio>
+#include <iostream>
 #include <string>
-#include <set>
 #include <map>
+#include <set>
 using namespace std;
 
-int N, M;
-
-// struct Book{
-//     string id;
-//     string title;
-//     string author;
-//     string key;
-//     string pub;
-//     string year;
-//     Book(string id, string title, string author, string key, string pub, string year):id(id),title(title),author(author),key(key),pub(pub),year(year){}
-// };
-
-// vector<Book> vec;
-map<string, set<string>> title_id;
-map<string, set<string>> author_id;
-map<string, set<string>> key_id;
-map<string, set<string>> pub_id;
-map<string, set<string>> year_id;
-
-void s_title(string s){
-    cout << "1: " << s << endl;
-    if(title_id.find(s) != title_id.end()){
-        for(auto it = title_id[s].begin(); it != title_id[s].end(); it++){
-            cout << *it << endl;
-        }
-    }
-    else{
-        cout << "Not Found" << endl;
-    }
-}
-
-void s_author(string s){
-    cout << "2: " << s<< endl;
-    if(author_id.find(s) != author_id.end()){
-        for(auto it = author_id[s].begin(); it != author_id[s].end(); it++){
-            cout << *it << endl;
-        }
-    }
-    else{
-        cout << "Not Found" << endl;
-    }
-}
-
-void s_key(string s){
-    cout << "3: " << s<< endl;
-    if(key_id.find(s) != key_id.end()){
-        for(auto it = key_id[s].begin(); it != key_id[s].end(); it++){
-            cout << *it << endl;
-        }
-    }
-    else{
-        cout << "Not Found" << endl;
-    }
-}
-
-void s_pub(string s){
-    cout << "4: " << s<< endl;
-    if(pub_id.find(s) != pub_id.end()){
-        for(auto it = pub_id[s].begin(); it != pub_id[s].end(); it++){
-            cout << *it << endl;
-        }
-    }
-    else{
-        cout << "Not Found" << endl;
-    }
-}
-
-void s_year(string s){
-    cout << "5: " << s<< endl;
-    if(year_id.find(s) != year_id.end()){
-        for(auto it = year_id[s].begin(); it != year_id[s].end(); it++){
-            cout << *it << endl;
-        }
-    }
-    else{
-        cout << "Not Found" << endl;
-    }
-}
-
-int main()
-{
-    cin >> N;
-    cin.ignore();
-    for(int i = 0; i < N; i++){
-        string id, title, author, key, pub, year;
-        getline(cin, id);
+int main() {
+    int n, m;
+    int type;
+    char c;
+    string query;
+    int id;
+    string title, author, key, pub, year;
+    map<string, set<int> > mtitle, mauthor, mkey, mpub, myear;
+    set<int>::iterator it;
+    scanf("%d", &n);
+    for(int i = 0; i < n; i++) {
+        //坑一：输入编号id后需要接收空格，否则getline会把换行读入
+        scanf("%d\n", &id);
         getline(cin, title);
+        mtitle[title].insert(id);
         getline(cin, author);
-        while(cin >> key){
-            key_id[key].insert(id);
-            char c = getchar();
-            if(c=='\n') break;
+        mauthor[author].insert(id);
+        //坑二：因为可能会读取多个关键词，所以要判断输入的最后一个字符是空格还是换行
+        while(cin >> key) {
+            mkey[key].insert(id);
+            c = getchar();
+            if(c == '\n')
+                break;
         }
         getline(cin, pub);
+        mpub[pub].insert(id);
         getline(cin, year);
-        // vec.push_back(Book(id, title, author,key,pub,year));
-        title_id[title].insert(id);
-        author_id[author].insert(id);
-      
-        pub_id[pub].insert(id);
-        year_id[year].insert(id);
+        myear[year].insert(id);
     }
-
-    cin >> M;
-    cin.ignore();
-    for(int i = 0; i < M; i++){
-        int type;
-        string s;
+    scanf("%d", &m);
+    for(int i = 0; i < m; i++) {
         scanf("%d: ", &type);
-        getline(cin, s);
-        switch(type){
-            case 1:
-                s_title(s);
-                break;
-            case 2:
-                s_author(s);
-                break;
-            case 3:
-                s_key(s);
-                break;
-            case 4:
-                s_pub(s);
-                break;
-            case 5:
-                s_year(s);
-                break;
+        getline(cin, query);
+        cout << type << ": " << query << endl;
+        //坑三：ID必须是7位，即使输入的时候没要求，输出的时候也要用0补齐
+        switch(type) {
+        case 1:
+            if(mtitle.find(query) != mtitle.end()) {
+                for(it = mtitle[query].begin(); it != mtitle[query].end(); it++)
+                    printf("%07d\n", *it);
+            } else {
+                printf("Not Found\n");
+            }
+            break;
+        case 2:
+            if(mauthor.find(query) != mauthor.end()) {
+                for(it = mauthor[query].begin(); it != mauthor[query].end(); it++)
+                    printf("%07d\n", *it);
+            } else {
+                printf("Not Found\n");
+            }
+            break;
+        case 3:
+            if(mkey.find(query) != mkey.end()) {
+                for(it = mkey[query].begin(); it != mkey[query].end(); it++)
+                    printf("%07d\n", *it);
+            } else {
+                printf("Not Found\n");
+            }
+            break;
+        case 4:
+            if(mpub.find(query) != mpub.end()) {
+                for(it = mpub[query].begin(); it != mpub[query].end(); it++)
+                    printf("%07d\n", *it);
+            } else {
+                printf("Not Found\n");
+            }
+            break;
+        case 5:
+            if(myear.find(query) != myear.end()) {
+                for(it = myear[query].begin(); it != myear[query].end(); it++)
+                    printf("%07d\n", *it);
+            } else {
+                printf("Not Found\n");
+            }
+            break;
+        default:
+            break;
         }
-
     }
     return 0;
 }
