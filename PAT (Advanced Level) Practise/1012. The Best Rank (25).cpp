@@ -1,118 +1,104 @@
-#include <iostream>
-#include <vector>
+/**
+* 分析：排序，处理逻辑过于复杂，而且只得了22分，有一个段错误，不太好找不找了
+*       参考柳神和晴神宝典的解法，学会数组在排序中的使用，逻辑不太好掌握的话也要学会简化代码
+**/
+
+#include <cstdio>
 #include <algorithm>
-#include <map>
 using namespace std;
+const int maxn = 2010;
 
-struct stu {
-    int ID;
-    int C;
-    int M;
-    int E;
-    int A;
-    int bestRank;
-    char bestItem;
-    stu(int id, int c, int m, int e) : ID(id), C(c), M(m), E(e) {
-        A = (c + m + e) / 3;
-    }
-};
+struct student {
+    int id;
+    int c, m, e, a;
+    int rc, rm, re, ra;
+} stu[maxn];
 
-bool compA(stu s1, stu s2) {
-    return s1.A > s2.A;
+bool cmpc(student a, student b) {
+    if(a.c != b.c)
+        return a.c > b.c;
 }
 
-bool compC(stu s1, stu s2) {
-    return s1.C > s2.C;
+bool cmpm(student a, student b) {
+    if(a.m != b.m)
+        return a.m > b.m;
 }
 
-bool compM(stu s1, stu s2) {
-    return s1.M > s2.M;
+bool cmpe(student a, student b) {
+    if(a.e != b.e)
+        return a.e > b.e;
 }
 
-bool compE(stu s1, stu s2) {
-    return s1.E > s2.E;
+bool cmpa(student a, student b) {
+    if(a.a != b.a)
+        return a.a > b.a;
 }
 
 int main() {
-    int N, M;
-    cin >> N >> M;
-    if (N == 0) {
-        int x;
-        while (M--) {
-            cin >> x;
-            cout << "N/A" << endl;
-        }
-        return 0;
+    int n, m;
+    int query, flag = -1;
+    scanf("%d %d", &n, &m);
+    for(int i = 0; i < n; i++) {
+        scanf("%d %d %d %d", &stu[i].id, &stu[i].c, &stu[i].m, &stu[i].e);
+        stu[i].a = (stu[i].c + stu[i].m + stu[i].e) / 3.0 + 0.5;
     }
-    int id, c, m, e;
-    vector<stu> students;
-    for (int i = 0; i < N; i++) {
-        cin >> id >> c >> m >> e;
-        students.push_back(stu(id, c, m, e));
-    }
-    sort(students.begin(), students.end(), compA);
-    int rankA = 1;
-    students[0].bestRank = 1;
-    students[0].bestItem = 'A';
-    for (int i = 1; i < N; i++) {
-        if (students[i].A < students[i - 1].A)
-            rankA = i + 1;//没有并列，若并列，rankA不更新
-        students[i].bestRank = rankA;
-        students[i].bestItem = 'A';
-    }
-    sort(students.begin(), students.end(), compC);
-    int rankC = 1;
-    if (students[0].bestRank != 1) {
-        students[0].bestRank = 1;
-        students[0].bestItem = 'C';
-    }
-    for (int i = 1; i < N; i++) {
-        if (students[i].C < students[i - 1].C)
-            rankC = i + 1;
-        if (rankC < students[i].bestRank) {
-            students[i].bestRank = rankC;
-            students[i].bestItem = 'C';
-        }
-    }
-    sort(students.begin(), students.end(), compM);
-    int rankM = 1;
-    if (students[0].bestRank != 1) {
-        students[0].bestRank = 1;
-        students[0].bestItem = 'M';
-    }
-    for (int i = 1; i < N; i++) {
-        if (students[i].M < students[i - 1].M)
-            rankM = i + 1;
-        if (rankM < students[i].bestRank) {
-            students[i].bestRank = rankM;
-            students[i].bestItem = 'M';
-        }
-    }
-    sort(students.begin(), students.end(), compE);
-    int rankE = 1;
-    if (students[0].bestRank != 1) {
-        students[0].bestRank = 1;
-        students[0].bestItem = 'E';
-    }
-    for (int i = 1; i < N; i++) {
-        if (students[i].E < students[i - 1].E)
-            rankE = i + 1;
-        if (rankE < students[i].bestRank) {
-            students[i].bestRank = rankE;
-            students[i].bestItem = 'E';
-        }
-    }
-    map<int, int > map;//用于查询
-    for (int i = 0; i < N; i++) {
-        map[students[i].ID] = i; // 保存 ID 对应列表的 index
-    }
-    int x;
-    while (M--) {
-        cin >> x;
-        if (map.find(x) == map.end())
-            cout << "N/A" << endl;
+    sort(stu, stu + n, cmpc);
+    stu[0].rc = 1;
+    for(int i = 1; i < n; i++) {
+        if(stu[i].c != stu[i - 1].c)
+            stu[i].rc = i + 1;
         else
-            cout << students[map[x]].bestRank << " " << students[map[x]].bestItem << endl;
+            stu[i].rc = stu[i - 1].rc;
+    }
+    sort(stu, stu + n, cmpm);
+    stu[0].rm = 1;
+    for(int i = 1; i < n; i++) {
+        if(stu[i].m != stu[i - 1].m)
+            stu[i].rm = i + 1;
+        else
+            stu[i].rm = stu[i - 1].rm;
+    }
+    sort(stu, stu + n, cmpe);
+    stu[0].re = 1;
+    for(int i = 1; i < n; i++) {
+        if(stu[i].e != stu[i - 1].e)
+            stu[i].re = i + 1;
+        else
+            stu[i].re = stu[i - 1].re;
+    }
+    sort(stu, stu + n, cmpa);
+    stu[0].ra = 1;
+    for(int i = 1; i < n; i++) {
+        if(stu[i].a != stu[i - 1].a)
+            stu[i].ra = i + 1;
+        else
+            stu[i].ra = stu[i - 1].ra;
+    }
+    while(m--) {
+        scanf("%d", &query);
+        for(int i = 0; i < n; i++) {
+            if(stu[i].id == query) {
+                flag = i;
+                break;
+            }
+        }
+        if(flag != -1) {
+            if(stu[flag].ra <= stu[flag].rc
+                    && stu[flag].ra <= stu[flag].rm
+                    && stu[flag].ra <= stu[flag].re)
+                printf("%d A\n", stu[flag].ra);
+            else if(stu[flag].rc <= stu[flag].rm
+                    && stu[flag].rc <= stu[flag].re)
+                printf("%d C\n", stu[flag].rc);
+            else if(stu[flag].rm <= stu[flag].re)
+                printf("%d M\n", stu[flag].rm);
+            else
+                printf("%d E\n", stu[flag].re);
+            flag = -1;
+        } else {
+            printf("N/A\n");
+        }
     }
     return 0;
 }
+
