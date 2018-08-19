@@ -1,36 +1,38 @@
+/**
+* 分析：8分钟AC25分到手
+*       重要的事说三遍：多考这种题！多考这种题！多考这种题！
+**/
+
 #include <cstdio>
-#include <iostream>
-#include <vector>
 #include <algorithm>
 using namespace std;
-struct stu {
-    char name[12];
-    char id[12];
+const int maxn = 100010;
+
+struct student {
+    char name[11];
+    char id[11];
     int grade;
-};
-int cmp1(stu a, stu b) {
-    return a.grade > b.grade;
+} stu[maxn];
+
+bool cmp(student a, student b) {
+    if(a.grade != b.grade)
+        return a.grade > b.grade;
 }
+
 int main() {
-    int n, low, high, cnt = 0;
+    int n, min, max, flag = 0;
     scanf("%d", &n);
-    vector<stu> v(n);
+    for(int i = 0; i < n; i++)
+        scanf("%s %s %d", stu[i].name, stu[i].id, &stu[i].grade);
+    sort(stu, stu + maxn, cmp);
+    scanf("%d %d", &min, &max);
     for(int i = 0; i < n; i++) {
-        scanf("%s %s %d", v[i].name, v[i].id, &v[i].grade);
-    }
-    scanf("%d %d", &low, &high);
-    for(int i = 0; i < n; i++) {
-        if(v[i].grade < low || v[i].grade > high) {
-            v[i].grade = -1;
-        } else {
-            cnt++;
+        if(stu[i].grade >= min && stu[i].grade <= max) {
+            printf("%s %s\n", stu[i].name, stu[i].id);
+            flag = 1;
         }
     }
-    sort(v.begin(), v.end(), cmp1);
-    for(int i = 0; i < cnt; i++) {
-        printf("%s %s\n", v[i].name, v[i].id);
-    }
-    if(cnt == 0)
-        printf("NONE");
+    if(flag == 0)
+        printf("NONE\n");
     return 0;
 }
