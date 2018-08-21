@@ -1,101 +1,49 @@
-/* 1103. Integer Factorization (30)
-
-The K-P factorization of a positive integer N is to write N as the sum of the P-th power of K positive integers. You are supposed to write a program to find the K-P factorization of N for any positive integers N, K and P.
-
-Input Specification:
-
-Each input file contains one test case which gives in a line the three positive integers N (<=400), K (<=N) and P (1<P<=7). The numbers in a line are separated by a space.
-
-Output Specification:
-
-For each case, if the solution exists, output in the format:
-
-N = n1^P + ... nK^P
-
-where ni (i=1, ... K) is the i-th factor. All the factors must be printed in non-increasing order.
-
-Note: the solution may not be unique. For example, the 5-2 factorization of 169 has 9 solutions, such as 122 + 42 + 22 + 22 + 12, or 112 + 62 + 22 + 22 + 22, or more. You must output the one with the maximum sum of the factors. If there is a tie, the largest factor sequence must be chosen -- sequence { a1, a2, ... aK } is said to be larger than { b1, b2, ... bK } if there exists 1<=L<=K such that ai=bi for i<L and aL>bL
-
-If there is no solution, simple output "Impossible".
-
-Sample Input 1:
-169 5 2
-Sample Output 1:
-169 = 6^2 + 6^2 + 6^2 + 6^2 + 5^2
-Sample Input 2:
-169 167 3
-Sample Output 2:
-Impossible */
+/**
+* 分析：DFS，要想明白为什么用DFS，要找到死胡同和岔路口，要考虑题目要求
+*       注意递归条件和输出格式
+*       沃日尼玛为啥CB编译器有这种bug，pow(5,2)竟然会等于24卧槽？
+**/
 
 #include <cstdio>
-#include <iostream>
 #include <cmath>
 #include <vector>
-#include <algorithm>
-
 using namespace std;
 
-int N, K, P;
-// int max_di = 1;
-// int res[20] = {0};
+int n, k, p, maxfacsum = -1;
+vector<int> fac, ans, temp;
 
-vector<int> path;
-vector<int> result;
-
-int max_n = -1;
-
-vector<int> v;
-void dfs(int sum, int cnt, int now){
-    if(cnt > K || sum < 0) return;
-    if(sum == 0 && cnt == K){
-        int tmp_sum = 0;
-        for(int i = 0; i < path.size(); i++){
-            tmp_sum += path[i];
-        }
-        if(tmp_sum > max_n){
-            result = path; 
-            max_n = tmp_sum;
+void DFS(int index, int nowk, int sum, int facsum) {
+    //死胡同
+    if(nowk == k && sum == n) {
+        if(facsum > maxfacsum) {
+            maxfacsum = facsum;
+            ans = temp;
         }
         return;
     }
-    if(now >= 1){
-        path.push_back(now);
-        dfs(sum-v[now], cnt+1, now);
-        path.pop_back();
-        dfs(sum, cnt, now-1);
+    if(nowk > k || sum > n)
+        return;
+    //岔道口
+    if(index >= 1) {
+        temp.push_back(index);
+        DFS(index, nowk + 1, sum + fac[index], facsum + index);
+        temp.pop_back();
+        DFS(index - 1, nowk, sum, facsum);
     }
 }
 
-int main(){
-    scanf("%d %d %d", &N, &K, &P);
-    // while(pow(max_di, P) < N){
-    //     max_di++;
-    // }
-    // for(int j = 1; j <= 20; j++){
-    //     res[j] = int(pow(j, P));
-    //     if(res[j] > N){
-    //         max_di = j-1;
-    //         break;
-    //     }
-    // }
-
-    int tmp = 0, index = 1;
-    while(tmp <= N){
-        v.push_back(tmp);
-        tmp = pow(index,P);
-        index++; 
-    }
-
-    dfs(N, 0, v.size()-1);
-
-    if(result.empty()){
+int main() {
+    scanf("%d %d %d", &n, &k, &p);
+    //预处理
+    for(int i = 0; pow(i, p) <= n; i++)
+        fac.push_back(pow(i, p));
+    DFS(fac.size() - 1, 0, 0, 0);
+    if(maxfacsum == -1)
         printf("Impossible\n");
-        return 0;
-    }
-    printf("%d = ", N);
-    for(int i = 0; i < result.size(); i++){
-        if(i != 0) printf(" + ");
-        printf("%d^%d", result[i], P);
+    else {
+        printf("%d = %d^%d", n, ans[0], p);
+        for(int i = 1; i < ans.size(); i++)
+            printf(" + %d^%d", ans[i], p);
     }
     return 0;
 }
