@@ -1,34 +1,49 @@
+/**
+* 分析：又是供应链问题，有了之前的经验没啥好说的
+*       12分钟一次AC，希望考试可以保持这种熟练度
+**/
+
 #include <cstdio>
-#include <iostream>
-#include <cmath>
 #include <vector>
 using namespace std;
-int n, maxdepth = 0, maxnum = 0, temp, root;
-vector<int> v[100010];
-void dfs(int index, int depth) {
-    if(v[index].size() == 0) {
-        if(maxdepth == depth)
-            maxnum++;
-        if(maxdepth < depth) {
-            maxdepth = depth;
-            maxnum = 1;
-        }
-        return ;
+const int maxn = 100010;
+
+int n, root, cnt = 0;
+double p, r, hp = 0.0;
+double ps[maxn] = {0.0};
+
+struct Node {
+    int weight;
+    vector<int> child;
+} node[maxn];
+
+void DFS(int index, double p) {
+    ps[index] = p;
+    if(node[index].child.size() == 0) {
+        if(p > hp)
+            hp = p;
+        p = p / (1.0 + r / 100);
+        return;
     }
-    for(int i = 0; i < v[index].size(); i++)
-        dfs(v[index][i], depth + 1);
+    for(int i = 0; i < node[index].child.size(); i++)
+        DFS(node[index].child[i], p * ( 1.0 + r / 100));
 }
+
 int main() {
-    double p, r;
-    scanf("%d %lf %lf", &n, &p, &r);
+    int id;
+    scanf("%d%lf%lf", &n, &p, &r);
     for(int i = 0; i < n; i++) {
-        scanf("%d", &temp);
-        if(temp == -1)
-            root = i;
+        scanf("%d", &id);
+        if(id != -1)
+            node[id].child.push_back(i);
         else
-            v[temp].push_back(i);
+            root = i;
     }
-    dfs(root, 0);
-    printf("%.2f %d", p * pow(1 + r/100, maxdepth), maxnum);
+    DFS(root, p);
+    for(int i = 0; i < n; i++) {
+        if(ps[i] == hp)
+            cnt++;
+    }
+    printf("%.2f %d", hp, cnt);
     return 0;
 }
