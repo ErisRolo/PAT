@@ -1,140 +1,105 @@
+/**
+* 分析：好难啊，连基本操作都有所改变，主要是这道题结点之间关系太复杂
+*       因为最后输出是家族中最小的ID，所以在合并时，ID小的作为父节点，不用考虑实际的父子母女关系，只需把属于一个家族的结点全部加到集合中
+*       建两个结构体用来简化，一个结构体用来接收数据，一个用来存放答案
+*       因为答案结构体是用ID作为数组下标，所以在处理数据获得结果时需要标记，方便后续遍历操作时的处理
+*       同时也要标记每一个出现的ID，用来统计人数
+*       有点复杂，还是不太会，再刷一刷想一想吧，这道题思路大概差不多就是这样
+**/
+
 #include <cstdio>
-#include <iostream>
-#include <vector>
-#include <set>
 #include <algorithm>
 using namespace std;
+const int maxn = 1010;
+const int maxk = 6;
+const int maxid = 10000;
 
-int N;
+int n, k, cnt = 0;
+int father[maxid];
+bool visit[maxid]; //标记出现的所有结点，方便统计人数
 
-struct Person{
-	int id; 
-	set<int> p;
-	set<int> c;
-	int e_cnt;
-	int area;
-	bool in;
-}list[10000];
+struct person {
+    int id, fid, mid, estate, area;
+    int cid[maxk];
+} people[maxn];
 
-struct Res{
-	int id;
-	int cnt;
-	double avg_sets;
-	double avg_area;
-};
+struct result {
+    int id, people;
+    double estate, area;
+    bool flag; //标记是否为根结点，一个根结点代表一个答案
+} ans[maxid];
 
-vector<int> vec;
-
-bool vis[10000] = {false}; // 是否算过
-bool flag[10000] = {false}; // 是否算过
-
-void dfs(int n, vector<int> &family){
-	if(list[n].p.size() == 0 || vis[n]) return; // 不在集合中或已访问过
-	vis[n] = true;  // 访问过该 id
-	if(list[n].in) family.push_back(n);
-	for(auto it = list[n].p.begin(); it != list[n].p.end(); it++){
-		if(*it != -1) dfs(*it, family);
-	}
-
-	if(list[n].c.size() != 0){
-		for(auto it = list[n].c.begin(); it != list[n].c.end(); it++){
-			dfs(*it, family);
-		}
-	}
+void init() {
+    for(int i = 0; i < maxid; i++)
+        father[i] = i;
 }
 
-bool cmp(Res &lhs, Res &rhs){
-	if(lhs.avg_area > rhs.avg_area) return true;
-	else if(lhs.avg_area == rhs.avg_area && lhs.id < rhs.id) return true;
-	else return false;
+int findFather(int x) {
+    while(x != father[x])
+        x = father[x];
+    return x;
 }
 
-int main(){
-	scanf("%d", &N);
-	for(int i = 0; i < N; i++){
-		int id, f, m;
-		scanf("%d", &id);
-		list[id].id = id;
-		scanf("%d %d", &f, &m);
-		list[id].p.insert(f);
-		list[id].p.insert(m);
-		if(f!=-1) list[f].c.insert(id);
-		if(m!=-1) list[m].c.insert(id);
+void Union(int a, int b) {
+    int fa = findFather(a);
+    int fb = findFather(b);
+    if(fa > fb)
+        father[fa] = fb;
+    else if(fa < fb)
+        father[fb] = fa;
+}
 
-		vec.push_back(list[id].id);
-		int c_cnt, tmp;
-		scanf("%d", &c_cnt);
-		for(int j = 0; j < c_cnt; j++){
-			scanf("%d", &tmp);
-			list[id].c.insert(tmp);
-			list[tmp].p.insert(id);
-		}
-		list[id].in = true;
-		scanf("%d %d", &list[id].e_cnt, &list[id].area);		
-	}
-	vector<vector<int>> group; 
-    
-    
-    for(int i = 0; i < N; i++){
-        vector<int> family;
-        dfs(vec[i], family);
-        if(family.size() != 0) group.push_back(family);
-    }
-    vector<Res> ans;
-    for(int i = 0; i < group.size(); i++){
-        Res res;
-        res.cnt = 0;
-    	fill(flag, flag+10000, false);
-        int min = 2147483647;
-        
-    	double set_sum = 0;
-        double area_sum = 0;
+bool cmp(result a, result b) {
+    if(a.area != b.area)
+        return a.area > b.area;
+    else if(a.id != b.id)
+        return a.id < b.id;
+}
 
-        // 确保 group 中都是有资产的
-    	for(int j = 0; j < group[i].size(); j++){
-    		int id = group[i][j];
-            if(id < min) min = id;
-
-    		set_sum += list[id].e_cnt;
-            area_sum += list[id].area;
-
-    		if(!flag[id]){
-    			res.cnt++;
-    			flag[id] = true;  // 访问过
-            }
-
-    		for(auto it = list[id].p.begin(); it != list[id].p.end(); it++){
-    			if(*it != -1){
-    				if(!flag[*it]){
-                        if(*it < min) min = *it;
-    					res.cnt++;
-    					flag[*it] = true;  // 访问过
-    				}
-    			}
-    		}
-
-    		for(auto it = list[id].c.begin(); it != list[id].c.end(); it++){
-    			if(!flag[*it]){
-                    if(*it < min) min = *it;
-    				res.cnt++;
-    				flag[*it] = true;  // 访问过
-    			}		
-    		}
+int main() {
+    init();
+    scanf("%d", &n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d %d %d %d", &people[i].id, &people[i].fid, &people[i].mid, &k);
+        visit[people[i].id] = true;
+        if(people[i].fid != -1) {
+            visit[people[i].fid] = true;
+            Union(people[i].fid, people[i].id);
         }
-        
-        res.id = min;
-        res.avg_sets = set_sum / res.cnt;
-        res.avg_area = area_sum / res.cnt;
-        ans.push_back(res);
+        if(people[i].mid != -1) {
+            visit[people[i].mid] = true;
+            Union(people[i].mid, people[i].id);
+        }
+        for(int j = 0; j < k; j++) {
+            scanf("%d", &people[i].cid[j]);
+            visit[people[i].cid[j]] = true;
+            Union(people[i].id, people[i].cid[j]);
+        }
+        scanf("%d %d", &people[i].estate, &people[i].area);
     }
-    sort(ans.begin(), ans.end(), cmp);
-    printf("%d\n", ans.size());
-    for(int i = 0; i < ans.size(); i++){
-        printf("%04d %d %.3lf %.3lf\n", ans[i].id, ans[i].cnt, ans[i].avg_sets, ans[i].avg_area);
+    for(int i = 0; i < n; i++) {
+        int id = findFather(people[i].id);
+        ans[id].id = id;
+        ans[id].estate += people[i].estate;
+        ans[id].area += people[i].area;
+        ans[id].flag = true;
     }
-    
-    
-    
-	return 0;
-
+    for(int i = 0; i < maxid; i++) {
+        if(visit[i])
+            ans[findFather(i)].people++;
+        if(ans[i].flag)
+            cnt++;
+    }
+    for(int i = 0; i < maxid; i++) {
+        if(ans[i].flag) {
+            ans[i].estate = (double)(ans[i].estate * 1.0 / ans[i].people);
+            ans[i].area = (double)(ans[i].area * 1.0 / ans[i].people);
+        }
+    }
+    sort(ans, ans + maxid, cmp);
+    printf("%d\n", cnt);
+    for(int i = 0; i < cnt; i++) {
+        printf("%04d %d %.3f %.3f\n", ans[i].id, ans[i].people, ans[i].estate, ans[i].area);
+    }
+    return 0;
 }
