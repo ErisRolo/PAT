@@ -1,57 +1,92 @@
-#include <iostream>
+/**
+* 分析：AVL基本操作！背代码！套模板！晴神牛逼！
+**/
+
+#include <cstdio>
+#include <algorithm>
 using namespace std;
-struct node {
-    int val;
-    struct node *left, *right;
-};
-node *rotateLeft(node *root) {
-    node *t = root->right;
-    root->right = t->left;
-    t->left = root;
-    return t;
+const int maxn = 21;
+
+struct Node {
+    int data;
+    int lchild, rchild;
+    int height;
+} node[maxn];
+
+int getHeight(int root) {
+    if(root == -1)
+        return 0;
+    else
+        return node[root].height;
 }
-node *rotateRight(node *root) {
-    node *t = root->left;
-    root->left = t->right;
-    t->right = root;
-    return t;
+
+int getBalanceFactor(int root) {
+    return getHeight(node[root].lchild) - getHeight(node[root].rchild);
 }
-node *rotateLeftRight(node *root) {
-    root->left = rotateLeft(root->left);
-    return rotateRight(root);
+
+void updateHeight(int root) {
+    node[root].height = max(getHeight(node[root].lchild), getHeight(node[root].rchild)) + 1;
 }
-node *rotateRightLeft(node *root) {
-    root->right = rotateRight(root->right);
-    return rotateLeft(root);
+
+void L(int &root) {
+    int temp = node[root].rchild;
+    node[root].rchild = node[temp].lchild;
+    node[temp].lchild = root;
+    updateHeight(root);
+    updateHeight(temp);
+    root = temp;
 }
-int getHeight(node *root) {
-    if(root == NULL) return 0;
-    return max(getHeight(root->left), getHeight(root->right)) + 1;
+
+void R(int &root) {
+    int temp = node[root].lchild;
+    node[root].lchild = node[temp].rchild;
+    node[temp].rchild = root;
+    updateHeight(root);
+    updateHeight(temp);
+    root = temp;
 }
-node *insert(node *root, int val) {
-    if(root == NULL) {
-        root = new node();
-        root->val = val;
-        root->left = root->right = NULL;
-    } else if(val < root->val) {
-        root->left = insert(root->left, val);
-        if(getHeight(root->left) - getHeight(root->right) == 2)
-            root = val < root->left->val ? rotateRight(root) : rotateLeftRight(root);
+
+int index = 0;
+void insert(int &root, int x) {
+    if(root == -1) {
+        node[index].data = x;
+        node[index].height = 1;
+        node[index].lchild = node[index].rchild = -1;
+        root = index++;
+        return;
+    }
+    if(x < node[root].data) {
+        insert(node[root].lchild, x);
+        updateHeight(root);
+        if(getBalanceFactor(root) == 2) {
+            if(getBalanceFactor(node[root].lchild) == 1) {
+                R(root);
+            } else if(getBalanceFactor(node[root].lchild) == -1) {
+                L(node[root].lchild);
+                R(root);
+            }
+        }
     } else {
-        root->right = insert(root->right, val);
-        if(getHeight(root->left) - getHeight(root->right) == -2)
-            root = val > root->right->val ? rotateLeft(root) : rotateRightLeft(root);
+        insert(node[root].rchild, x);
+        updateHeight(root);
+        if(getBalanceFactor(root) == -2) {
+            if(getBalanceFactor(node[root].rchild) == -1) {
+                L(root);
+            } else if(getBalanceFactor(node[root].rchild) == 1) {
+                R(node[root].rchild);
+                L(root);
+            }
+        }
     }
-    return root;
 }
+
 int main() {
-    int n, val;
+    int n, data, root = -1;
     scanf("%d", &n);
-    node *root = NULL;
     for(int i = 0; i < n; i++) {
-        scanf("%d", &val);
-        root = insert(root, val);
+        scanf("%d", &data);
+        insert(root, data);
     }
-    printf("%d", root->val);
+    printf("%d", node[root].data);
     return 0;
 }
