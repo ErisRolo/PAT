@@ -1,86 +1,75 @@
+/**
+* 分析：做题一定要仔细！要注意输出格式！大小写！
+*       思路逐渐理解一些了，就是把有关系的结点放到一个集合，找到第一个结点后就不断合并
+*       求什么数据，其实就是求根结点的数量，因为一个根结点就是一个集合的标志
+*       不要把父亲结点和根结点搞混
+**/
+
 #include <cstdio>
-#include <vector>
-#include <set>
-#include <algorithm>
-using namespace std;
+const int maxn = 10010;
 
-int N, Q;
-int f[10010]; // 父节点
+int father[maxn];
+int isRoot[maxn];
+bool flag[maxn];
 
+void init() {
+    for(int i = 1; i <= maxn; i++)
+        father[i] = i;
+}
 
-int findFater(int x){
-    int a = x;
-    while(f[x] != x){
-        x = f[x];
-    }
-    while(f[a] != a){
-        int z = a;
-        a = f[a];
-        f[z] = x;
+int findRoot(int x) {
+    int y = x;
+    while(x != father[x])
+        x = father[x];
+    while(y != father[y]) {
+        int z = y;
+        y = father[y];
+        father[z] = x;
     }
     return x;
 }
 
-set<int> num_set; // 所有数字集合
+void Union(int a, int b) {
+    int fa = findRoot(a);
+    int fb = findRoot(b);
+    if(fa != fb)
+        father[fa] = fb;
+}
 
-bool visit[10010] = {false}; // 该数是否出现过
-
-vector<int> vec; // 暂存一棵树上的数字
-
-int main(){
-
-    scanf("%d", &N);
-
-    for(int m = 0; m < N; m++){
-        int k, tmp;
-        vec.clear();
-        scanf("%d", &k);
-        for(int j = 0; j < k; j++){
-            scanf("%d", &tmp);
-            vec.push_back(tmp);
-            num_set.insert(tmp);
-        }
-
-        set<int> fset; // 父节点的集合
-        for(int i = 0; i < vec.size(); i++){
-            if(visit[vec[i]]){   // 数字出现过, 则获得父节点集合
-                int fu = findFater(vec[i]);
-                fset.insert(fu);
-            }
-        }
-        if(fset.size() > 0){ // 有一个或多个数字(根)出现过
-            // 关联集合, 其他根节点设为第一个根节点的子节点
-            for(auto it = fset.begin(); it != fset.end(); it++){
-                f[*it] = *(fset.begin());
-            }
-            // 关联集合
-            for(int i = 0; i < vec.size(); i++){
-                f[vec[i]] = *(fset.begin());
-                visit[vec[i]] = true; // 最后把 visit 设为 true
-            }
-        }
-        else{ // 数字都没出现过, 则设其父节点为第一个数
-           for(int i = 0; i < vec.size(); i++){
-                f[vec[i]] = vec[0];
-                visit[vec[i]] = true; // 最后把 visit 设为 true
-           }
+int main() {
+    init();
+    int n, k;
+    int id, temp;
+    scanf("%d", &n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d%d", &k, &id);
+        flag[id] = true;
+        for(int j = 0; j < k - 1; j++) {
+            scanf("%d", &temp);
+            flag[temp] = true;
+            Union(id, temp);
         }
     }
-
-    int cnt = 0; // 根节点数目
-    for(auto it = num_set.begin(); it!=num_set.end(); it++){
-        if(f[*it] == *it) cnt++;
+    for(int i = 1; i <= maxn; i++) {
+        if(flag[i] == true)
+            isRoot[findRoot(i)]++;
     }
-    printf("%d %d\n", cnt, num_set.size());
-    scanf("%d", &Q);
-    int a, b;
-    for(int i = 0; i < Q; i++){
-        scanf("%d %d", &a, &b);
-        int f_a = findFater(a);
-        int f_b = findFater(b);
-        if(f_a == f_b) printf("Yes\n");
-        else printf("No\n");
+    int cnt1 = 0, cnt2 = 0;
+    for(int i = 1; i <= maxn; i++) {
+        if(flag[i] == true && isRoot[i] != 0) {
+            cnt1++;
+            cnt2 += isRoot[i];
+        }
     }
-
+    printf("%d %d\n", cnt1, cnt2);
+    int q, b1, b2;
+    scanf("%d", &q);
+    for(int i = 0; i < q; i++) {
+        scanf("%d%d", &b1, &b2);
+        if(findRoot(b1) == findRoot(b2))
+            printf("Yes\n");
+        else
+            printf("No\n");
+    }
     return 0;
 }
