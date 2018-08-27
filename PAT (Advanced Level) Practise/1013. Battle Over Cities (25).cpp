@@ -1,75 +1,46 @@
-// 思路：求连通分量（极大连通子图）个数
-// 并查集
+/**
+* 分析：这道题要学会如何求无向图的连通块数量，最终答案即连通块数量减1
+*       因为图的遍历过程中每次总是访问单个连通块，并将访问过的标记为已访问，因此在遍历的过程中计数即可，每DFS一次数量就+1
+*       至于如何处理删除一个结点后的遍历，只需将这个结点提前设为已访问即可，或者可以在DFS遍历时，遇到这个结点就直接return
+**/
 
 #include <cstdio>
-#include <utility> // 注意 pair 是 <utility> 头文件里的
-#include <vector>
+#include <algorithm>
 using namespace std;
+const int maxn = 1010;
 
-int N, M, K;
-int father[1001];
-vector<pair<int, int>> roads;
+int n, m, k;
+int G[maxn][maxn];
+bool vis[maxn];
 
-int find_father(int x) {
-    int a = x; // 暂存 x
-    // 先找到根节点
-    while(father[x] != x) {
-        x = father[x];
+void DFS(int v) {
+    vis[v] = true;
+    for(int i = 1; i <= n; i++) {
+        if(G[v][i] != 0 && vis[i] == false)
+            DFS(i);
     }
-    // 路径压缩，防止深度过大
-    while(father[a] != a) { // 注意这个顺序
-        // 如果是先 father[a] = x, 这把 a 原来的父节点改掉了，上不去了
-        int z = a;     // 暂存<原来>的 a
-        a = father[a]; // a 变为a的父节点
-        father[z] = x; // <原来>的 a 直接设为 x 子节点
-
-        // 也可以暂存原来的父节点
-    }
-    return x; // 返回根节点
-}
-
-int count() {
-    int cnt = 0;
-    for(int i = 0; i < N; i++) {
-        if(find_father(i) == i)
-            cnt++; // 有一个根节点，计数+1
-    }
-    return cnt - 1;
-}
-
-void print_del(int del) {
-    for(auto i = roads.begin(); i != roads.end(); i++) {
-        int a = i->first;
-        int b = i->second;
-        if(a != del and b != del) {
-            // 除了要删除的节点外，本身a,b就相连
-            int root_a = find_father(a);
-            int root_b = find_father(b);
-            // 合并
-            if(root_a != root_b)
-                father[root_a] = root_b;
-        }
-    }
-    printf("%d\n", count() - 1); // count() 为连通分量个数，但要排除删除的节点
 }
 
 int main() {
-    scanf("%d %d %o", &N, &M, &K);
-    // read roads
-    for(int i = 0; i < M; i++) {
-        int a, b;
-        scanf("%d %d", &a, &b);
-        roads.push_back(make_pair(a, b));
+    int c1, c2;
+    scanf("%d%d%d", &n, &m, &k);
+    for(int i = 0; i < m; i++) {
+        scanf("%d%d", &c1, &c2);
+        G[c1][c2] = G[c2][c1] = 1;
     }
-    // read check list
-    for(int i = 0; i < K; i++) {
-        // 每次查找后都会修改 father，每次都必须初始化每个节点都为根节点
-        for(int i = 0; i < N; i++) {
-            father[i] = i;
+    int lost;
+    for(int i = 0; i < k; i++) {
+        scanf("%d", &lost);
+        int block = 0;
+        fill(vis, vis + maxn, false);
+        vis[lost] = true;
+        for(int i = 1; i <= n; i++) {
+            if(vis[i] == false) {
+                DFS(i);
+                block++;
+            }
         }
-        int del;
-        scanf("%d", &del);
-        print_del(del);
+        printf("%d\n", block - 1);
     }
     return 0;
 }
