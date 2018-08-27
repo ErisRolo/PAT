@@ -1,134 +1,79 @@
-/* 1021. Deepest Root (25) 
-
-A graph which is connected and acyclic can be considered a tree. The height of the tree depends on the selected root. Now you are supposed to find the root that results in a highest tree. Such a root is called the deepest root.
-
-Input Specification:
-
-Each input file contains one test case. For each case, the first line contains a positive integer N (<=10000) which is the number of nodes, and hence the nodes are numbered from 1 to N. Then N-1 lines follow, each describes an edge by given the two adjacent nodes' numbers.
-
-Output Specification:
-
-For each test case, print each of the deepest roots in a line. If such a root is not unique, print them in increasing order of their numbers. In case that the given graph is not a tree, print "Error: K components" where K is the number of connected components in the graph.
-
-Sample Input 1:
-5
-1 2
-1 3
-1 4
-2 5
-Sample Output 1:
-3
-4
-5
-Sample Input 2:
-5
-1 3
-1 4
-2 5
-3 4
-Sample Output 2:
-Error: 2 components */
+/**
+* 分析：卧槽这道题不会做！！！
+*       一开始感觉需要同时用并查集和图的DFS遍历才能解决，但又觉得25分的题不会出得这么难
+*       然后果断看答案，还真是两个考点都用了。。。
+*       不仅如此，这道题要知道一个结论才能做，还要注意特判和去重
+*       不愧是TOP之前的甲级题，确实很难。。。
+*       但是了解结论后，发现稍作修改，就可以去掉并查集的部分，只需使用两个不同的DFS即可
+*       一个用来计算连通块，一个用来统计根结点
+**/
 
 #include <cstdio>
 #include <vector>
 #include <algorithm>
 using namespace std;
+const int maxn = 100010;
 
-int N;
-int max_deepth = 1;
-int f[10010]; // 父节点
-int g[10010][10010]; // 节点连接关系
-vector<int> result;
-vector<int> tmp;
+int n, maxheight = 0;
+bool vis[maxn];
+vector<int> Adj[maxn];
+vector<int> temp;
+vector<int> ans;
 
-void init()
-{
-    for (int i = 1; i <= N; i++)
-    {
-        f[i] = i;
+void DFS(int v) {
+    vis[v] = true;
+    for(int i = 0; i < Adj[v].size(); i++) {
+        if(vis[Adj[v][i]] == false)
+            DFS(Adj[v][i]);
     }
 }
 
-int get_root(int x)
-{
-    int a = x;
-    while (f[x] != x)
-    {
-        x = f[x];
+void NDFS(int v, int height, int pre) {
+    if(height > maxheight) {
+        temp.clear();
+        temp.push_back(v);
+        maxheight = height;
+    } else if(height == maxheight) {
+        temp.push_back(v);
     }
-    // 压缩路径
-    while (f[a] != a)
-    {
-        int z = a;
-        a = f[a];
-        f[z] = x;
-    }
-    return x;
-}
-
-void union_root(int a, int b)
-{
-    int r_a = get_root(a);
-    int r_b = get_root(b);
-    if (r_a != r_b)
-    {
-        f[r_b] = r_a;
-    }
-    return;
-}
-
-void dfs(int id, int pre, int deepth){
-    if(deepth > max_deepth){
-        max_deepth = deepth;
-        tmp.clear();
-        tmp.push_back(id);
-    }
-    else if(deepth == max_deepth){
-        tmp.push_back(id);
-    }
-    for(int i = 1; i <= N; i++){
-        if(g[id][i] && i != pre){
-           dfs(i, id, deepth+1); 
-        }
+    vis[v] = true;
+    for(int i = 0; i < Adj[v].size(); i++) {
+        if(Adj[v][i] == pre)
+            continue;
+        NDFS(Adj[v][i], height + 1, v);
     }
 }
 
-int main()
-{
-    scanf("%d", &N);
-    init();
+int main() {
     int a, b;
-    for (int i = 1; i < N; i++)
-    {
-        scanf("%d %d", &a, &b);
-        g[a][b] = 1;
-        g[b][a] = 1;
-        union_root(a, b);
+    scanf("%d", &n);
+    for(int i = 1; i <= n - 1; i++) {
+        scanf("%d%d", &a, &b);
+        Adj[a].push_back(b);
+        Adj[b].push_back(a);
     }
-    int cnt = 0;
-    for (int i = 1; i <= N; i++)
-    {
-        if (f[i] == i)
-            cnt++;
-    }
-    if (cnt > 1)
-    {
-        printf("Error: %d components", cnt);
-    }
-    else
-    {
-        dfs(1, -1, 1); // 从 1 号节点深度遍历, 表示深度为1
-        // result.assign(tmp.begin(), tmp.end());
-        result = tmp;
-        tmp.clear();
-        dfs(result[0], -1, 1); // 随便找一个已知最深节点, 开始第二轮遍历
-        result.insert(result.end(), tmp.begin(), tmp.end());
-        sort(result.begin(), result.end());
-        int last = -1;
-        for(auto i = result.begin(); i != result.end(); i++){
-            if(last != *i) printf("%d\n", *i); // 去重
-            last = *i;
+    int block = 0;
+    for(int i = 1; i <= n; i++) {
+        if(vis[i] == false) {
+            DFS(i);
+            block++;
         }
+    }
+    if(block == 1) {
+        fill(vis, vis + maxn, false);
+        NDFS(1, 1, -1);
+        ans = temp;
+        NDFS(ans[0], 1, -1);
+        for(int i = 0; i < temp.size(); i++)
+            ans.push_back(temp[i]);
+        sort(ans.begin(), ans.end());
+        printf("%d\n", ans[0]);
+        for(int i = 1; i < ans.size(); i++) {
+            if(ans[i] != ans[i - 1])
+                printf("%d\n", ans[i]);
+        }
+    } else {
+        printf("Error: %d components", block);
     }
     return 0;
 }
