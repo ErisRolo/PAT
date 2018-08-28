@@ -1,110 +1,71 @@
-/* 1122. Hamiltonian Cycle (25)
+/**
+* 分析：幸好刷题了不然真不知道，不要什么题都往模板上去套
+*       PAT也会有许多图论的题，纯粹根据题意和图的性质解题，这种的自由发挥就好
+*       比如这道汉密尔顿回路，读懂题意，画图，思考出判断的逻辑即可
+*       判断的依据是，回路顶点数等于顶点总数+1，起始点和终点相同
+*       除了起始点和终点是同一个顶点出现两次，其余顶点必出现且仅出现一次
+**/
 
-The "Hamilton cycle problem" is to find a simple cycle that contains every vertex in a graph. Such a cycle is called a "Hamiltonian cycle".
-
-In this problem, you are supposed to tell if a given cycle is a Hamiltonian cycle.
-
-Input Specification:
-
-Each input file contains one test case. For each case, the first line contains 2 positive integers N (2< N <= 200), the number of vertices, and M, the number of edges in an undirected graph. Then M lines follow, each describes an edge in the format "Vertex1 Vertex2", where the vertices are numbered from 1 to N. The next line gives a positive integer K which is the number of queries, followed by K lines of queries, each in the format:
-
-n V1 V2 ... Vn
-
-where n is the number of vertices in the list, and Vi's are the vertices on a path.
-
-Output Specification:
-
-For each query, print in a line "YES" if the path does form a Hamiltonian cycle, or "NO" if not.
-
-Sample Input:
-6 10
-6 2
-3 4
-1 5
-2 5
-3 1
-4 1
-1 6
-6 3
-1 2
-4 5
-6
-7 5 1 4 3 6 2 5
-6 5 1 4 3 6 2
-9 6 2 1 6 3 4 5 2 6
-4 1 2 5 1
-7 6 1 3 4 5 2 6
-7 6 1 2 5 4 3 1
-Sample Output:
-YES
-NO
-NO
-NO
-YES
-NO */
 #include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+const int maxn = 210;
 
+int n, m, k, t;
+int g[maxn][maxn];
+int flag = true;
+int times[maxn];
+vector<int> query;
 
-int graph[201][201];
-
-int isConnected(int *v, int n) {
-    int pre = v[0];
-    for (int i = 1; i < n; i++) {
-        if (graph[pre][v[i]] != 1) {
-            return 0;
-        }
-        pre = v[i];
-    }
-    return 1;
-}
-
-int isHamilt(int *v, int n) {
-    if (v[0] != v[n - 1]) return 0;
-    int *times = new int[n];
-    for (int i = 0; i < n; i++) {
-        times[i] = 0;
-    }
-    for (int i = 0; i < n; i++) {
-        times[v[i]]++;
-    }
-    
-    for (int i = 1; i < n; i++) {
-        if (i == v[0]) {
-            if (times[i] != 2) {
-                return 0;
-            }
-        } else {
-            if (times[i] != 1) {
-                return 0;
-            }
-        }
-    }
-    return 1;
+bool isConnect(int a, int b) {
+    if(g[a][b] == 1)
+        return true;
+    else
+        return false;
 }
 
 int main() {
-    int n = 0, m = 0;
-    scanf("%d %d", &n, &m);
-
-    for (int i = 0; i < m; i++) {
-        int a = 0, b = 0;
-        scanf("%d %d", &a, &b);
-        graph[a][b] = graph[b][a] = 1;
+    int v1, v2;
+    scanf("%d%d", &n, &m);
+    for(int i = 0; i < m; i++) {
+        scanf("%d%d", &v1, &v2);
+        g[v1][v2] = g[v2][v1] = 1;
     }
-    int k = 0;
+    int v;
     scanf("%d", &k);
-   a for (int i = 0; i < k; i++) {
-        int kn = 0;
-        scanf("%d", &kn);
-        int *v = new int[kn];
-        for (int j = 0; j < kn; j++) {
-            scanf("%d", &v[j]);
+    for(int i = 1; i <= k; i++) {
+        flag = true;
+        fill(times, times + maxn, 0);
+        query.clear();
+        scanf("%d", &t);
+        for(int j = 0; j < t; j++) {
+            scanf("%d", &v);
+            times[v]++;
+            query.push_back(v);
         }
-        if (kn == n + 1 && isConnected(v, kn) && isHamilt(v, kn)) {
-            printf("YES\n");
+        if(query.size() != n + 1) {
+            flag = false;
+        } else if(query[0] == query[query.size() - 1]) {
+            for(int q = 1; q < query.size() - 1; q++) {
+                if(times[query[q]] > 1) {
+                    flag = false;
+                    break;
+                }
+            }
+            for(int q = 1; q < query.size(); q++) {
+                if(isConnect(query[q - 1], query[q]) == false) {
+                    flag = false;
+                    break;
+                }
+            }
         } else {
-            printf("NO\n");
+            flag = false;
         }
+        if(flag == true)
+            printf("YES\n");
+        else
+            printf("NO\n");
     }
     return 0;
 }
