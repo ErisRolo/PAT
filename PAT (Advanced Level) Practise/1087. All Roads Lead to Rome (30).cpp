@@ -1,91 +1,123 @@
+/**
+* 分析：Dijkstra+DFS，一小时内搞定，局部变量别忘了初始化
+**/
+
+#include <cstdio>
 #include <iostream>
 #include <map>
 #include <vector>
+#include <string>
 #include <algorithm>
 using namespace std;
+const int maxn = 420;
+const int inf = 1000000000;
+
 int n, k;
-const int inf = 999999999;
-int e[205][205], weight[205], dis[205];
-bool visit[205];
-vector<int> pre[205], temppath, path;
-map<string, int> m;
-map<int, string> m2;
-int maxvalue = 0, mindepth, cntpath = 0;
-double maxavg;
-void dfs(int v) {
-    temppath.push_back(v);
-    if(v == 1) {
-        int value = 0;
-        for(int i = 0; i < temppath.size(); i++) {
-            value += weight[temppath[i]];
-        }
-        double tempavg = 1.0 * value / (temppath.size() - 1);
-        if(value > maxvalue) {
-            maxvalue = value;
-            maxavg = tempavg;
-            path = temppath;
-        } else if(value == maxvalue && tempavg > maxavg) {
-            maxavg = tempavg;
-            path = temppath;
-        }
-        temppath.pop_back();
-        cntpath++;
-        return ;
+int s;
+string st;
+int maxhappy = 0, numpath = 0;
+double avghappy = 0;
+int g[maxn][maxn];
+int d[maxn], h[maxn];
+bool vis[maxn];
+vector<int> pre[maxn];
+vector<int> path, temppath;
+map<string, int> strtoid;
+map<int, string> idtostr;
+
+int num = 0;
+int getid(string str) {
+    if(strtoid.find(str) == strtoid.end()) {
+        strtoid[str] = num;
+        idtostr[num] = str;
+        return num++;
+    } else {
+        return strtoid[str];
     }
-    for(int i = 0; i < pre[v].size(); i++) {
-        dfs(pre[v][i]);
-    }
-    temppath.pop_back();
 }
-int main() {
-    fill(e[0], e[0] + 205 * 205, inf);
-    fill(dis, dis + 205, inf);
-    scanf("%d %d", &n, &k);
-    string s;
-    cin >> s;
-    m[s] = 1;
-    m2[1] = s;
-    for(int i = 1; i < n; i++) {
-        cin >> s >> weight[i+1];
-        m[s] = i+1;
-        m2[i+1] = s;
-    }
-    string sa, sb;
-    int temp;
-    for(int i = 0; i < k; i++) {
-        cin >> sa >> sb >> temp;
-        e[m[sa]][m[sb]] = temp;
-        e[m[sb]][m[sa]] = temp;
-    }
-    dis[1] = 0;
+
+void Dijkstra(int s) {
+    fill(d, d + maxn, inf);
+    d[s] = 0;
     for(int i = 0; i < n; i++) {
-        int u = -1, minn = inf;
-        for(int j = 1; j <= n; j++) {
-            if(visit[j] == false && dis[j] < minn) {
+        int u = -1, min = inf;
+        for(int j = 0; j < n; j++) {
+            if(vis[j] == false && d[j] < min) {
                 u = j;
-                minn = dis[j];
+                min = d[j];
             }
         }
-        if(u == -1) break;
-        visit[u] = true;
-        for(int v = 1; v <= n; v++) {
-            if(visit[v] == false && e[u][v] != inf) {
-                if(dis[u] + e[u][v] < dis[v]) {
-                    dis[v] = dis[u] + e[u][v];
+        if(u == -1)
+            return;
+        vis[u] = true;
+        for(int v = 0; v < n; v++) {
+            if(vis[v] == false && g[u][v] != inf) {
+                if(d[u] + g[u][v] < d[v]) {
+                    d[v] = d[u] + g[u][v];
                     pre[v].clear();
                     pre[v].push_back(u);
-                } else if(dis[v] == dis[u] + e[u][v]) {
+                } else if (d[u] + g[u][v] == d[v]) {
                     pre[v].push_back(u);
                 }
             }
         }
     }
-    int rom = m["ROM"];
-    dfs(rom);
-    printf("%d %d %d %d\n", cntpath, dis[rom], maxvalue, (int)maxavg);
-    for(int i = path.size() - 1; i >= 1; i--) {
-        cout << m2[path[i]] << "->";
+}
+
+void DFS(int v) {
+    if(v == s) {
+        temppath.push_back(v);
+        int hap = 0;
+        double avghap;
+        for(int i = temppath.size() - 1; i >= 0; i--) {
+            int id = temppath[i];
+            hap += h[id];
+        }
+        avghap  = hap * 1.0 / (temppath.size() - 1);
+        if(hap > maxhappy) {
+            maxhappy = hap;
+            path = temppath;
+            avghappy = avghap;
+        } else if(hap == maxhappy && avghap > avghappy) {
+            path = temppath;
+            avghappy = avghap;
+        }
+        numpath++;
+        temppath.pop_back();
+        return;
     }
+    temppath.push_back(v);
+    for(int i = 0; i < pre[v].size(); i++)
+        DFS(pre[v][i]);
+    temppath.pop_back();
+}
+
+int main() {
+    fill(g[0], g[0] + maxn * maxn, inf);
+    scanf("%d%d", &n, &k);
+    cin >> st;
+    s = getid(st);
+    int c, happy;
+    string city;
+    for(int i = 1; i <= n - 1; i++) {
+        cin >> city >> happy;
+        c = getid(city);
+        h[c] = happy;
+    }
+    int a, b, cost;
+    string c1, c2;
+    for(int i = 0; i < k; i++) {
+        cin >> c1 >> c2 >> cost;
+        a = getid(c1);
+        b = getid(c2);
+        g[a][b] = g[b][a] = cost;
+    }
+    int e = getid("ROM");
+    Dijkstra(s);
+    DFS(e);
+    cout << numpath << " " << d[e] << " " << maxhappy << " " << (int)avghappy << endl;
+    for(int i = path.size() - 1; i > 0; i--)
+        cout << idtostr[path[i]] << "->";
     cout << "ROM";
     return 0;
 }
