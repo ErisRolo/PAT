@@ -1,3 +1,8 @@
+/**
+* 分析：拓扑排序，其实不是考模板，知道拓扑排序的定义用定义去判断即可
+*       即有向无环图存在边u->v，那么序列中u一定在v前面
+**/
+
 #include <cstdio>
 #include <vector>
 #include <queue>
