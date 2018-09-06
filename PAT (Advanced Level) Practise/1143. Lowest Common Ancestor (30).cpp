@@ -1,61 +1,54 @@
+/**
+* 分析：已知BST先序序列求任意两结点的最近公共祖先
+*       记住规律：遍历先序序列，第一个满足大于等于其中一结点并小于等于另一结点的结点即为所求
+*       此题用bool数组标记会有一个段错误和一个测试点无法通过，扣5分，改成map可AC
+*       切记不要轻易用bool数组
+**/
+
 #include <cstdio>
-#include <vector>
+#include <map>
 using namespace std;
-const int maxn = 210;
+const int maxn = 10010;
 
-int n, e;
-int m, k, temp;
-int g[maxn][maxn];
-vector<int> vec;
-bool flag[maxn];
-
-bool judgeC(vector<int> vec) {
-    for(int i = 0; i < vec.size(); i++) {
-        for(int j = i + 1; j < vec.size(); j++) {
-            if(g[vec[i]][vec[j]] == 0)
-                return false;
-        }
-    }
-    return true;
-}
-
-bool judgeM(vector<int> vec) {
-    for(int i = 1; i <= n; i++) {
-        if(flag[i] == false) {
-            vec.push_back(i);
-            if(judgeC(vec))
-                return false;
-            vec.pop_back();
-        }
-    }
-    return true;
-}
+int m, n;
+int pre[maxn];
+//bool flag[maxn];
+map<int, bool> mp;
 
 int main() {
-    fill(g[0], g[0] + maxn * maxn, 0);
-    scanf("%d%d", &n, &e);
-    int a, b;
-    for(int i = 0; i < e; i++) {
-        scanf("%d%d", &a, &b);
-        g[a][b] = g[b][a] = 1;
+    scanf("%d%d", &m, &n);
+    int temp;
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &temp);
+        pre[i] = temp;
+        //flag[temp] = true;
+        mp[temp] = true;
     }
-    scanf("%d", &m);
+    int u, v, r;
     for(int i = 0; i < m; i++) {
-        vec.clear();
-        fill(flag, flag + maxn, false);
-        scanf("%d", &k);
-        for(int j = 0; j < k; j++) {
-            scanf("%d", &temp);
-            vec.push_back(temp);
-            flag[temp] = true;
+        scanf("%d%d", &u, &v);
+        for(int j = 0; j < n; j++) {
+            r = pre[j];
+            if((r >= u && r <= v) || (r <= u && r >= v))
+                break;
         }
-        if(judgeC(vec)) {
-            if(judgeM(vec))
-                printf("Yes\n");
-            else
-                printf("Not Maximal\n");
+//        if(flag[u] == false && flag[v] == false) {
+//            printf("ERROR: %d and %d are not found.\n", u, v);
+//        } else if(flag[u] == false || flag[v] == false) {
+//            printf("ERROR: %d is not found.\n", flag[u] == false ? u : v);
+//        } else if(r == u || r == v) {
+//            printf("%d is an ancestor of %d.\n", r, r == u ? v : u);
+//        } else {
+//            printf("LCA of %d and %d is %d.\n", u, v, r);
+//        }
+        if(mp[u] == false && mp[v] == false) {
+            printf("ERROR: %d and %d are not found.\n", u, v);
+        } else if(mp[u] == false || mp[v] == false) {
+            printf("ERROR: %d is not found.\n", mp[u] == false ? u : v);
+        } else if(r == u || r == v) {
+            printf("%d is an ancestor of %d.\n", r, r == u ? v : u);
         } else {
-            printf("Not a Clique\n");
+            printf("LCA of %d and %d is %d.\n", u, v, r);
         }
     }
     return 0;
