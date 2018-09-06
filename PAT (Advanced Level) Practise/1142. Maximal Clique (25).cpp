@@ -1,3 +1,7 @@
+/**
+* 分析：最大团问题，要么之前了解这个概念，要么读懂题意。。。
+**/
+
 #include <cstdio>
 #include <vector>
 using namespace std;
