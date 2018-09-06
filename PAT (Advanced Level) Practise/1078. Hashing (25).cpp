@@ -1,3 +1,7 @@
+/**
+* 分析：Hash平方检测法标准写法
+**/
+
 #include <cstdio>
 #include <cmath>
 const int maxn = 10010;
