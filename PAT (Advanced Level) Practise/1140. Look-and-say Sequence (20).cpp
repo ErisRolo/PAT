@@ -1,3 +1,7 @@
+/**
+* 分析：题不难，主要得读懂题意，这个没办法。。。
+**/
+
 #include <cstdio>
 #include <iostream>
 #include <cstring>
