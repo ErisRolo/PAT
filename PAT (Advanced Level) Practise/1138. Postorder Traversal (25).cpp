@@ -1,3 +1,7 @@
+/**
+* 分析：模板题，前序中序转后序，一定要十分熟练才行！
+**/
+
 #include <cstdio>
 #include <vector>
 using namespace std;
