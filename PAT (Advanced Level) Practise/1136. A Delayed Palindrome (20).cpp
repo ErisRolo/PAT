@@ -1,3 +1,7 @@
+/**
+* 分析：考查大整数运算和字符串处理，要熟练使用reverse等STL函数
+**/
+
 #include <cstdio>
 #include <string>
 #include <iostream>
