@@ -1,21 +1,40 @@
 /**
-* 分析：放松一下
+* 分析：不要影响初试
 **/
 
 #include <cstdio>
+#include <cmath>
+#include <vector>
+using namespace std;
+
+vector<int> p;
+
+bool isPrime(int n) {
+    if (n <= 1)
+        return false;
+    int sqr = (int)sqrt(1.0 * n);
+    for (int i = 2; i <= sqr; i++) {
+        if (n % i == 0)
+            return false;
+    }
+    return true;
+}
+
+void init() {
+    for(int i = 2; i < 100000; i++) {
+        if(isPrime(i))
+            p.push_back(i);
+    }
+}
 
 int main() {
-    int n;
+    init();
+    int n, cnt = 0;
     scanf("%d", &n);
-    int b, s, d;
-    b = n / 100;
-    s = n / 10 % 10;
-    d = n - b * 100 - s * 10;
-    for(int i = 0; i < b; i++)
-        printf("B");
-    for(int i = 0; i < s; i++)
-        printf("S");
-    for(int i = 1; i <= d; i++)
-        printf("%d", i);
+    for(int i = 1; i < p.size(); i++) {
+        if(p[i] <= n && p[i] - p[i - 1] == 2)
+            cnt++;
+    }
+    printf("%d", cnt);
     return 0;
 }
