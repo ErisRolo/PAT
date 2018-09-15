@@ -1,40 +1,38 @@
 /**
-* 分析：不要影响初试
+* 分析：快快快
 **/
 
 #include <cstdio>
-#include <cmath>
 #include <vector>
 using namespace std;
 
-vector<int> p;
-
-bool isPrime(int n) {
-    if (n <= 1)
-        return false;
-    int sqr = (int)sqrt(1.0 * n);
-    for (int i = 2; i <= sqr; i++) {
-        if (n % i == 0)
-            return false;
-    }
-    return true;
-}
-
-void init() {
-    for(int i = 2; i < 100000; i++) {
-        if(isPrime(i))
-            p.push_back(i);
-    }
-}
-
 int main() {
-    init();
-    int n, cnt = 0;
-    scanf("%d", &n);
-    for(int i = 1; i < p.size(); i++) {
-        if(p[i] <= n && p[i] - p[i - 1] == 2)
-            cnt++;
+    int n, m, d, cnt = 0;
+    vector<int> v1, v2;
+    scanf("%d%d", &n, &m);
+    if(m > n)
+        m = m % n;
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &d);
+        cnt++;
+        if(cnt <= n - m)
+            v1.push_back(d);
+        else
+            v2.push_back(d);
     }
-    printf("%d", cnt);
+    for(int i = 0; i < v2.size(); i++) {
+        if(m != n)
+            printf("%d ", v2[i]);
+        else {
+            printf("%d", v2[i]);
+            if(i != v2.size() - 1)
+                printf(" ");
+        }
+    }
+    for(int i = 0; i < v1.size(); i++) {
+        printf("%d", v1[i]);
+        if(i != v1.size() - 1)
+            printf(" ");
+    }
     return 0;
 }
