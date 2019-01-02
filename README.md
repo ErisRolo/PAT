@@ -46,15 +46,9 @@
 ### :bulb: 其他 
 
 - [进制转换](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/系统设计基础.md)
-
 - [字符串处理](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/分布式.md)
-
 - [链表处理](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/集群.md)
-
 - [贪心](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/攻击技术.md)
-
 - [素数问题](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/缓存.md)
-
 - [其他数学问题](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/消息队列.md)
-
 - [Tips](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/Socket.md)
