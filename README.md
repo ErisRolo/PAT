@@ -29,19 +29,19 @@
 
 ### :memo: 图（重要程度仅次于树吧）
 
-- [图论](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [图的遍历](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [最短路径(Dijkstra算法)](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [拓扑排序](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [关键路径](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [图论](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/图论.md)
+- [图的遍历](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/图的遍历.md)
+- [最短路径(Dijkstra算法)](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/最短路径.md)
+- [拓扑排序](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/拓扑排序.md)
+- [关键路径](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/关键路径.md)
 
 ### :floppy_disk: 排序 
 
-- [固定模板](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [固定模板](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/排序.md)
 
 ### :coffee: Hash哈希映射
 
-- [常见考法](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [常见考法](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/Hash.md)
 
 ### :bulb: 其他 
 
