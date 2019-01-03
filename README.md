@@ -45,10 +45,10 @@
 
 ### :bulb: 其他 
 
-- [进制转换](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [字符串处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [链表处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [贪心](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [素数问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [其他数学问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
-- [Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [进制转换](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/进制转换.md)
+- [字符串处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/字符串处理.md)
+- [链表处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/链表处理.md)
+- [贪心](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/贪心.md)
+- [素数问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/素数.md)
+- [其他数学问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/math.md)
+- [Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/Tips.md)
