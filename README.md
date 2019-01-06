@@ -2,9 +2,9 @@
 
 浙江大学PAT(Programming Ability Test)题解  
 
-以下是几种最常考题型总结，并不全面，仅供参考
+首先是孩神的[刷题模板](https://blog.csdn.net/kid_14_12/article/details/85340428)
 
-
+然后是我自己总结的几种最常考题型，并不全面，仅供参考
 
 ### :pencil2: STL
 
@@ -45,10 +45,10 @@
 
 ### :bulb: 其他 
 
-- [进制转换](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/进制转换.md)
-- [字符串处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/字符串处理.md)
-- [链表处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/链表处理.md)
-- [贪心](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/贪心.md)
-- [素数问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/素数.md)
-- [其他数学问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/math.md)
-- [Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/Tips.md)
+- [进制转换](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [字符串处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [链表处理](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [贪心](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [素数问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [其他数学问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
+- [Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
