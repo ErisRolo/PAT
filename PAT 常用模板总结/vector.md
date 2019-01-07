@@ -4,4 +4,4 @@
 
 vector<vector<int> > name; //两个维都可变长的二维数组（没考过）
 
-vector<int> name[size]; //一维为定长，表示name[0]~name[size-1]中每一个都是							 一个int型的vector容器（考了两次）
+vector<int> vec[size]; //一维为定长，表示name[0]~name[size-1]中每一个都是							 一个int型的vector容器（考了两次）
