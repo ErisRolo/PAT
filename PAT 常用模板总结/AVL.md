@@ -39,7 +39,7 @@ max(getHeight(node[root].lchild),getHeight(node[root].rchild)) + 1;
 
 }
 
-**//左旋**
+//左旋
 
 void L(int &root) {
 
@@ -57,7 +57,7 @@ void L(int &root) {
 
 }
 
-**//右旋**
+//右旋
 
 void R(int &root) {
 
@@ -75,7 +75,7 @@ void R(int &root) {
 
 }
 
-**//插入**
+//插入
 
 int index = 0;
 
