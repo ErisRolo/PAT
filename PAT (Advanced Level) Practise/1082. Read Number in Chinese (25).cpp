@@ -1,53 +1,48 @@
 /**
-* 分析：按中文发音输出9位数以内的整数，有点难，而且意义不大，看懂晴神代码算了，不耽误时间
+* 分析：首先判断是否输出正负，然后对每一位分别判断，要习惯这种找规律的方法 
+*       如果非0则必读出数字，根据位置判断是否输出数位，其中若输出千百十则前面一个数必不为0，所以判断语句的位置要准确
+*       如果为0则根据下一位来判断，当前位不是最后一位且下一位非0则输出
+*       用一个vector存储结果，可以方便处理空格
+*       别忘了要对单独一个0进行特判
 **/
-
-#include <cstdio>
-#include <cstring>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-string num[10] = {"ling", "yi", "er", "san", "si", "wu", "liu", "qi", "ba", "jiu"}; //num[0]="ling",...
-string wei[5] = {"Shi", "Bai", "Qian", "Wan", "Yi"}; //Wei[0]="Shi",...
+string num[10]= {"ling","yi","er","san","si","wu","liu","qi","ba","jiu"};
+vector<string> ans;
 
 int main() {
-    string str;
-    cin >> str; //按字符串方式输入数字
-    int len = str.size();
-    int left = 0, right = len - 1; //left与right分别指向字符串首尾元素
-    if(str[0] == '-') {
-        cout << "Fu";
-        left++; //负数把left右移1位
-    }
-    while(left + 4 <= right) {
-        right -= 4; //将right每次左移4位，直到left与right在同一节
-    }
-    while(left < len) { //循环每次处理数字的一节(4位或小于4位)
-        bool flag = false; //flag==false表示没有累积的0
-        bool isPrint = false; //isPrint==false表示该节没有输出过其中的位
-        while(left <= right) { //从左至右处理数字中某节的每一位
-            if(left > 0 && str[left] == '0') { //如果当前位为0
-                flag = true;
-            } else { //如果当前位不为0
-                if(flag == true) { //如果存在累积的0
-                    printf(" ling");
-                    flag = false;
-                }
-                if(left > 0) { //只要不是首位（包括负号），后面的每一位前都要输出空格
-                    cout << " ";
-                }
-                cout << num[str[left] - '0']; //输出当前位数字
-                isPrint = true; //该节至少有一位被输出
-                if(left != right) { //某节中除了个位外，都需要输出十百千
-                    cout << " " << wei[right - left - 1];
-                }
-            }
-            left++; //left右移1位
-        }
-        if(isPrint == true && right != len - 1) { //只要不是个位，就输出万或亿
-            cout << " " << wei[(len - 1 - right) / 4 + 2];
-        }
-        right += 4; //right右移4位，输出下一节
-    }
-    return 0;
+	string s;
+	cin>>s;
+	if(s=="0")
+		cout<<"ling";
+	if(s[0]=='-') {
+		cout<<"Fu ";
+		s= s.substr(1,s.size()-1);
+	}
+	for(int i=0; i<s.size(); i++) {
+		int d = s[i]-'0';
+		if(d!=0) {
+			ans.push_back(num[d]);
+			if(s.size()-i==8 || s.size()-i==4)
+				ans.push_back("Qian");
+			if(s.size()-i==7 || s.size()-i==3)
+				ans.push_back("Bai");
+			if(s.size()-i==6 || s.size()-i==2)
+				ans.push_back("Shi");
+		} else {
+			if(i!=s.size()-1&&s[i+1]!='0')
+				ans.push_back(num[0]);
+		}
+		if(s.size()-i==9)
+			ans.push_back("Yi");
+		if(s.size()-i==5)
+			ans.push_back("Wan");
+	}
+	for(vector<string>::iterator it = ans.begin(); it!=ans.end(); it++) {
+		cout<<*it;
+		if(it!=ans.end()-1)
+			cout<<" ";
+	}
+	return 0;
 }
