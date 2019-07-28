@@ -1,39 +1,34 @@
+/**
+* ·ÖÎö£ºÇçÉñÕâµÀÌâµÄËã·¨Ë¼Â·Ì«Å£ÅúÁË£¬30·ÖµÄÌâ20¶àĞĞ´úÂëAC
+*      ×¢ÒâĞèÒªÌØÅĞÈ«²¿Îª0µÄÇé¿ö
+*      »¹ÓĞÒòÎª×î¸ß8Î»Êı£¬ËùÒÔ²»ÄÜ¶ÁÕûÊıÈ¥Ç°µ¼0£¬Ö±½Ó¶Á×Ö·û´®
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 10010;
 
-int compare(string a, string b) {
-    string ab = a + b;
-    string ba = b + a;
-    return ab < ba;
+string s[maxn];
+
+bool cmp(string a,string b) {
+	return a+b<b+a;
 }
 
 int main() {
-    int N;
-    vector<string> nums;
-    string buffer;
-    cin >> N;
-    for(int i = 0; i < N; i++) {
-        cin >> buffer;
-        nums.push_back(buffer);
-    }
-    sort(nums.begin(), nums.end(), compare);
-    stringstream ss;
-    int num;
-    // æ’é™¤å…¨0æƒ…å†µï¼Œå…ˆæ‰¾æœ€å¤§çš„å­—ç¬¦ä¸²çœ‹æ˜¯å¦ä¸º0
-    ss << nums[nums.size() - 1];
-    ss >> num;
-    if(num == 0) {
-        cout << 0 << endl;
-        return 0;
-    }
-    // æ³¨æ„æ¸…é™¤åŸæ¥çš„è¾“å…¥
-    ss.clear();
-    ss << nums[0];
-    ss >> num;
-    cout << num;
-    for(int i = 1; i < nums.size(); i++) {
-        cout << nums[i];
-    }
-    cout << endl;
-    return 0;
+	int n;
+	string str;
+	scanf("%d",&n);
+	for(int i=0; i<n; i++)
+		cin>>s[i];
+	sort(s,s+n,cmp);
+	for(int i=0; i<n; i++)
+		str+=s[i];
+	while(str.size()!=0&&str[0]=='0') {
+		str.erase(str.begin());
+	}
+	if(str.size()==0)
+		cout<<0;
+	else
+		cout<<str;
+	return 0;
 }
