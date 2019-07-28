@@ -1,37 +1,43 @@
+/**
+* 分析：贪心第一题，不算难，15分钟AC 
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 1010;
 
-struct node {
-    float invent, price, val;
-};
+struct Mooncake {
+	double sum; //总价
+	double num; //库存
+	double price; //单价
+} m[maxn];
 
-int cmp(node a, node b) {
-    return a.val > b.val;
+bool cmp(Mooncake a,Mooncake b) {
+	return a.price>b.price;
 }
 
 int main() {
-    int N, D;
-    scanf("%d%d", &N, &D);
-    vector<node> arr(N);
-    for(int i = 0; i < N; i++) {
-        scanf("%f", &arr[i].invent);
-    }
-    for(int i = 0; i < N; i++) {
-        scanf("%f", &arr[i].price);
-        arr[i].val =  arr[i].price / arr[i].invent;
-    }
-    sort(arr.begin(), arr.end(), cmp);
-    float res = 0;
-    for(int i = 0; i < N; i++) { //涓嶈兘鐢╳hile(D>=0)鍒ゆ柇锛屽洜涓哄彲鑳芥墍鏈夋湀楗兼�诲拰灏忎簬D
-        if(arr[i].invent <= D) {
-            res += arr[i].price;
-        } else {
-            res = res + arr[i].val * D;
-            break;
-        }
-        D -= arr[i].invent;
-    }
-    printf("%.2f", res);
-    return 0;
-
+	int n;
+	double d;
+	double p = 0;
+	scanf("%d%lf",&n,&d);
+	for(int i=0; i<n; i++) {
+		scanf("%lf",&m[i].num);
+	}
+	for(int i=0; i<n; i++) {
+		scanf("%lf",&m[i].sum);
+		m[i].price = m[i].sum/m[i].num;
+	}
+	sort(m,m+n,cmp);
+	for(int i=0; i<n; i++) {
+		if(m[i].num>=d) {
+			p+=m[i].price*d;
+			break;
+		} else {
+			p+=m[i].price*m[i].num;
+			d-=m[i].num;
+		}
+	}
+	printf("%.2f\n",p);
+	return 0;
 }
