@@ -1,37 +1,39 @@
+/**
+* 分析：用连续子列和作为数组存储，则a[1]-a[3]的和可以用s[3]-s[0]来表示
+*      显然是递增的，递增有序数列容易想到二分,根据题意，是找第一个大于等于m的右端点
+*      关键在于计算upper_bound()的第三个参数，即s[right]-s[left-1]>=m，所以第三个参数为s[left-1]+m
+*      第一轮循环找出最接近的值，第二轮循环将每个等于这个值的数列输出，这个值要初始化为一个极大值，且不能用min()函数，因为最后s[n]-s[n]=0
+*      注意每轮循环都只用一重+一次二分，不然会超时，这道题多做几遍
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 100010;
+
+int d[maxn];
+int s[maxn];
 
 int main() {
-    int n, target, num;
-    cin >> n >> target;
-    vector<int> sum(n + 1);
-    for(int i = 0; i < n; i++) {
-        cin >> num;
-        sum[i + 1] = sum[i] + num;
-    }
-    vector<int> res(n + 1);
-    int mm = 999999999;
-    for(int i = 1; i <= n; i++) {
-        int left = i, right = n;
-        int mid;
-        while(left < right) {
-            mid = (left + right) / 2;
-            if(sum[mid] - sum[i - 1] >= target) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        if(sum[right] - sum[i - 1] >= target) {
-            if(sum[right] - sum[i - 1] < mm)
-                mm = sum[right] - sum[i - 1];
-            res[i] = right;
-        } else
-            break;
-    }
-    for(int i = 1; i <= n; i++) {
-        if(sum[res[i]] - sum[i - 1] == mm)
-            printf("%d-%d\n", i, res[i]);
-    }
-    return 0;
+	int n,m,sum=100000010;
+	scanf("%d%d",&n,&m);
+	for(int i=1; i<=n; i++) {
+		scanf("%d",&d[i]);
+		s[i]=d[i]+s[i-1];
+	}
+	for(int i=1; i<=n; i++) {
+		int pos = lower_bound(s+i,s+n+1,s[i-1]+m)-s; //二分查找s[i]-s[n]，第一个d[i]+...+d[n]=s[n]-s[i-1]≥m的值
+//		sum=min(sum,s[pos]);
+		if(s[pos]-s[i-1]==m) {
+			sum=s[pos]-s[i-1];
+			break;
+		} else if(s[pos]-s[i-1]<sum && pos<=n) {
+			sum=s[pos]-s[i-1];
+		}
+	}
+	for(int i=1; i<=n; i++) {
+		int pos = lower_bound(s+i,s+n+1,s[i-1]+sum)-s;
+		if(s[pos]-s[i-1]==sum)
+			printf("%d-%d\n",i,pos);
+	}
+	return 0;
 }
