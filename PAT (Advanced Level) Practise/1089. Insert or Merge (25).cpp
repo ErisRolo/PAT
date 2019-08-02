@@ -1,62 +1,64 @@
+/**
+* 分析：模拟插入排序和归并排序的过程，要能熟练快速准确地写出几种经典排序算法的代码
+*       这里为了方便比较用vector代替了数组
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> a, b, c;
-
-void merge_sort(vector<int>& a, int b, int e, int step) {
-    for (int i = b; i < e; i += step + step) {
-        inplace_merge(a.begin() + i, a.begin() + min(e, i + step), a.begin() + min(e, i + step + step));
-    }
-}
-
-void insert_sort(vector<int>& a, int b, int e) {
-    while (b + 1 < e && a[b] <= a[b + 1])
-        ++b;
-    if (++b < e) {
-        while (b > 0 && a[b] < a[b - 1]) {
-            swap(a[b], a[b - 1]);
-            --b;
-        }
-    }
-}
-
 int main() {
-    int n;
+    int n, temp;
+    bool f1 = false, f2 = false;
+    vector<int> a, b, t;
     scanf("%d", &n);
-    c.resize(n);
-    b.resize(n);
-    for (int i = 0; i < n; ++i) {
-        scanf("%d", &c[i]);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &temp);
+        a.push_back(temp);
     }
-    for (int i = 0; i < n; ++i) {
-        scanf("%d", &b[i]);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &temp);
+        b.push_back(temp);
     }
-    a = c;
-    bool flag = false;
-    for (int i = 0; i < n; ++i) {
-        if (a == b) {
-            printf("Insertion Sort\n");
-            insert_sort(a, 0, n);
-            flag = true;
+    //插入排序
+    t = a;
+    for(int i = 1; i < n; i++) {
+        temp = t[i];
+        int j = i;
+        while(j > 0 && temp < t[j - 1]) {
+            t[j] = t[j - 1];
+            j--;
+        }
+        t[j] = temp;
+        if(f1 == true) {
+            for(int k = 0; k < n; k++) {
+                printf("%d", t[k]);
+                if(k != n - 1)
+                    printf(" ");
+            }
             break;
         }
-        insert_sort(a, 0, n);
-    }
-    if (!flag) {
-        a = c;
-        printf("Merge Sort\n");
-        for (int step = 1; step <= n; step += step) {
-            merge_sort(a, 0, n, step);
-            if (a == b) {
-                merge_sort(a, 0, n, step + step);
-                break;
-            }
+        if(f1 == false && t == b) {
+            printf("Insertion Sort\n");
+            f1 = true;
         }
     }
-    printf("%d", a[0]);
-    for (int i = 1; i < n; ++i) {
-        printf(" %d", a[i]);
+    //归并排序
+    t = a;
+    for(int step = 2; step / 2 <= n; step *= 2) {
+        for(int i = 0; i < n; i += step)
+            sort(t.begin() + i, t.begin() + min(i + step, n));
+        if(f2 == true) {
+            for(int k = 0; k < n; k++) {
+                printf("%d", t[k]);
+                if(k != n - 1)
+                    printf(" ");
+            }
+            break;
+        }
+        if(f2 == false && t == b) {
+            printf("Merge Sort\n");
+            f2 = true;
+        }
     }
-    printf("\n");
     return 0;
 }
