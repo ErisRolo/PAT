@@ -1,91 +1,99 @@
+/**
+* 分析：分数四则运算，套模板即可，加减乘除写出一个基本就是复制粘贴了，不过作为20分的题感觉还是很费时间
+*       所以一定要熟练，要能迅速地把模板写出来
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 110;
+typedef long long LL;
 
-long long gcd(long long a, long long b) {
-    return b == 0 ? a : gcd(b, a % b) ;
+struct Fraction {
+    LL up, down;
+};
+
+LL gcd(LL a, LL b) {
+    if(b == 0)
+        return a;
+    else
+        return gcd(b, a % b);
 }
 
-void func(long long m, long long n) {
-    int flag1 = 0, flag2 = 0, flag = 0;
-    if(n == 0) {
-        printf("Inf");
-        return ;
+Fraction reduction(Fraction f) {
+    if(f.down < 0) {
+        f.up = -f.up;
+        f.down = -f.down;
     }
-    if(m == 0) {
-        printf("0");
-        return ;
-    }
-    if(m < 0)
-        flag1 = 1;
-    if(n < 0)
-        flag2 = 1;
-    m = abs(m), n = abs(n);
-    if(flag1 == 1 && flag2 == 1)
-        flag = 0;
-    else if(flag1 == 1 || flag2 == 1)
-        flag = 1;
-    if(m == n) {
-        if(flag == 1)
-            printf("(-1)");
-        else
-            printf("1");
-        return ;
-    }
-    long long x = m % n, y = m / n;
-    if(x == 0) {
-        if(flag == 0)
-            printf("%d", y);
-        else
-            printf("(-%d)", y);
-        return ;
+    if(f.up == 0) {
+        f.down = 1;
     } else {
-        long long t1 = m - y * n, t2 = n, t = gcd(t1, t2);
-        t1 /= t, t2 /= t;
-        if(flag == 1) {
-            printf("(-");
-            if(y == 0) {
-                printf("%lld/%lld", t1, t2);
-            } else {
-                printf("%lld %lld/%lld", y, t1, t2);
-            }
-            printf(")");
-        } else {
-            if(y == 0) {
-                printf("%lld/%lld", t1, t2);
-            } else {
-                printf("%lld %lld/%lld", y, t1, t2);
-            }
-        }
+        LL d = gcd(abs(f.up), abs(f.down));
+        f.up /= d;
+        f.down /= d;
     }
+    return f;
+}
+
+void showFraction(Fraction f) {
+    if(f.up < 0)
+        printf("(");
+    if(f.down == 1)
+        printf("%lld", f.up);
+    else if(abs(f.up) > f.down)
+        printf("%lld %lld/%lld", f.up / f.down, abs(f.up) % f.down, f.down);
+    else
+        printf("%lld/%lld", f.up, f.down);
+    if(f.up < 0)
+        printf(")");
 }
 
 int main() {
-    long long int a, b, c, d;
-    scanf("%lld/%lld %lld/%lld", &a, &b, &c, &d);
-//	printf("%lld %lld %lld %lld",a,b,c,d);
-    func(a, b);
+    Fraction a, b, c1, c2, c3, c4;
+    scanf("%lld/%lld", &a.up, &a.down);
+    a = reduction(a);
+    scanf("%lld/%lld", &b.up, &b.down);
+    b = reduction(b);
+    //加法
+    c1.up = a.up * b.down + b.up * a.down;
+    c1.down = a.down * b.down;
+    c1 = reduction(c1);
+    showFraction(a);
     printf(" + ");
-    func(c, d);
+    showFraction(b);
     printf(" = ");
-    func(a * d + c * b, b * d);
+    showFraction(c1);
     printf("\n");
-    func(a, b);
+    //减法
+    c2.up = a.up * b.down - b.up * a.down;
+    c2.down = a.down * b.down;
+    c2 = reduction(c2);
+    showFraction(a);
     printf(" - ");
-    func(c, d);
+    showFraction(b);
     printf(" = ");
-    func(a * d - c * b, b * d);
+    showFraction(c2);
     printf("\n");
-    func(a, b);
+    //乘法
+    c3.up = a.up * b.up;
+    c3.down = a.down * b.down;
+    c3 = reduction(c3);
+    showFraction(a);
     printf(" * ");
-    func(c, d);
+    showFraction(b);
     printf(" = ");
-    func(a * c, b * d);
+    showFraction(c3);
     printf("\n");
-    func(a, b);
+    //除法
+    c4.up = a.up * b.down;
+    c4.down = a.down * b.up;
+    c4 = reduction(c4);
+    showFraction(a);
     printf(" / ");
-    func(c, d);
+    showFraction(b);
     printf(" = ");
-    func(a * d, b * c);
-    printf("\n");
+    if(b.up == 0 && b.down == 1)
+        printf("Inf"); //对除数为0进行特判
+    else
+        showFraction(c4);
     return 0;
 }
