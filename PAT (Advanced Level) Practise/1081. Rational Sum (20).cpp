@@ -1,37 +1,63 @@
+/**
+* 分析：分数加法运算，套模板即可，在刚记忆过的情况下不到20分钟AC
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 110;
+typedef long long LL;
 
-int gcd(int a, int b) {
-    return b == 0 ? a : gcd(b, a % b);
+struct Fraction {
+    LL up, down;
+} f[maxn];
+
+LL gcd(LL a, LL b) {
+    if(b == 0)
+        return a;
+    else
+        return gcd(b, a % b);
+}
+
+Fraction reduction(Fraction f) {
+    if(f.down < 0) {
+        f.up = -f.up;
+        f.down = -f.down;
+    }
+    if(f.up == 0) {
+        f.down = 1;
+    } else {
+        LL d = gcd(abs(f.up), abs(f.down));
+        f.up /= d;
+        f.down /= d;
+    }
+    return f;
+}
+
+void showFraction(Fraction f) {
+    if(f.down == 1) {
+        printf("%lld", f.up);
+    } else if(f.up > f.down) {
+        printf("%lld %lld/%lld", f.up / f.down, abs(f.up) % f.down, f.down);
+    } else {
+        printf("%lld/%lld", f.up, f.down);
+    }
 }
 
 int main() {
     int n;
-    cin >> n;
-    int a, b;
-    scanf("%d/%d", &a, &b);
-    int t = gcd(a, b);
-    a = a / t, b = b / t;
+    Fraction temp, res;
+    LL up, down;
+    scanf("%d", &n);
+    scanf("%lld/%lld", &temp.up, &temp.down);
+    f[0] = reduction(temp);
+    res = f[0];
     for(int i = 1; i < n; i++) {
-        int c, d;
-        scanf("%d/%d", &c, &d);
-        a = a * d + b * c;
-        b = b * d;
-        int t = gcd(a, b);
-        a = a / t, b = b / t;
+        scanf("%lld/%lld", &temp.up, &temp.down);
+        f[i] = reduction(temp);
+        res.up = res.up * f[i].down + f[i].up * res.down;
+        res.down *= f[i].down;
+        res = reduction(res);
     }
-    if(a % b == 0)
-        printf("%d", a / b);
-    else {
-        if(abs(a) > abs(b)) {
-            if(a > 0)
-                printf("%d %d/%d", a / b, a - a / b * b, b);
-            else {
-                a = -a;
-                printf("-%d %d/%d", a / b, a - a / b * b, b);
-            }
-        } else
-            printf("%d/%d", a, b);
-    }
+    showFraction(res);
     return 0;
 }
