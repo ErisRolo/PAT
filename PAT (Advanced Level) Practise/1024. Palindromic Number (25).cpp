@@ -1,50 +1,70 @@
+/**
+* 分析：判断回文串，因为所给范围10^10，所以为高精度运算，还是要熟练要快
+*       不过这题就25分，可以只用字符串操作，看看网上的简便算法
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
-const int N = 1e3+5;
-const ll INF = 0x3f3f3f3f;
-const double eps=1e-4;
-const int T=3;
+const int maxn = 100;
 
-string str;
-int k;
+struct bign {
+    int d[maxn];
+    int len;
+    bign() {
+        fill(d, d + maxn, 0);
+        len = 0;
+    }
+};
 
-string add(string a,string b) {
-    char ans[N]= {0};
-    ans[N-1]='\0';
-    int len=N-2;
-    for(int i=a.length()-1; i>=0; i--,len--) {
-        int tmp=ans[len]+a[i]-'0'+b[i]-'0';
-        if(tmp>9) {
-            ans[len]=tmp%10+'0';
-            ans[len-1]++;
-        } else {
-            ans[len]=tmp+'0';
-        }
+bign strToBign(string s) {
+    bign n;
+    for(int i = s.size() - 1; i >= 0; i--)
+        n.d[n.len++] = s[i] - '0';
+    return n;
+}
+
+bign addBign(bign a, bign b) {
+    bign c;
+    int i, carry = 0;
+    for( i = 0; i < a.len || i < b.len; i++) {
+        int temp = a.d[i] + b.d[i] + carry;
+        carry = temp / 10;
+        c.d[c.len++] = temp % 10;
     }
-    if(ans[len]>0) {
-        ans[len]+='0';
-        len--;
+    if(carry != 0) {
+        c.d[c.len++] = carry;
     }
-    return string(ans+len+1);
+    return c;
+}
+
+void print(bign n) {
+    for(int i = n.len - 1; i >= 0; i--)
+        printf("%d", n.d[i]);
+}
+
+bool judge(bign n) {
+    for(int i = 0; i < n.len / 2; i++) {
+        if(n.d[i] != n.d[n.len - 1 - i])
+            return false;
+    }
+    return true;
 }
 
 int main() {
-    cin>>str>>k;
-    bool flag=0;
-    for(int i=0; i<k; i++) {
-        string s=str;
-        reverse(s.begin(),s.end());
-        if(s!=str) {
-            str=add(str,s);
-        } else {
-            flag=1;
-            cout<<str<<"\n"<<i<<endl;
-            break;
-        }
+    string s;
+    int k, step = 0;
+    cin >> s >> k;
+    bign a = strToBign(s);
+    while(judge(a) == false && step < k) {
+        bign b, c;
+        b.len = a.len;
+        for(int i = 0; i < a.len; i++)
+            b.d[i] = a.d[a.len - 1 - i];
+        c = addBign(a, b);
+        a = c;
+        step++;
     }
-    if(!flag) {
-        cout<<str<<"\n"<<k<<endl;
-    }
+    print(a);
+    printf("\n%d", step);
     return 0;
 }
