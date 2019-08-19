@@ -1,47 +1,31 @@
 /**
-* 分析：太难了太难了。。。
-*       不要把所有看上去不是直接问最短路径的题当成Dijkstra+DFS题，比如这道，是纯Dijkstra题
-*       模板仍一样，主要是在主函数进行逻辑处理，要深刻理解最短路径的思想才可以
-*       然后把算法求出来的最短路径当工具，去结合题目解决实际问题
-*       因为CB不支持C++11，因此stoi不能用，学会手动循环实现字符串和数字的转换
+* 分析：输出距离最近的house的距离最远的station，如果不唯一则输出平均距离最小的，如果还不唯一输出编号最小的
+*       无论怎么判断，标尺都是距离，因此属于只求最短距离没有第二标尺的问题
+*       只写Dijkstra固定模板即可，对每一个起点使用一次，然后算出距离进行比较判断输出
+*       house为1-n，则station可以设到n+1-n+m，数组开1020即可
+*       审题要仔细，一定要读清题意！
+*       gtmd竟然不用四舍五入，样例算出3.2和给出的3.3不一样也能A
 **/
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 const int maxn = 1020;
 const int inf = 1000000000;
 
-int n, m, k, ds;
+int n, m, k, s, st, ed;
 int g[maxn][maxn];
 int d[maxn];
 bool vis[maxn];
 
-int getnum(string s) {
-    int ans = 0;
-    if (s[0] == 'G') {
-        for (int i = 1; i < s.length(); i++)
-            ans = ans * 10 + s[i] - '0';
-        ans += n;
-    } else {
-        for (int i = 0; i < s.length(); i++)
-            ans = ans * 10 + s[i] - '0';
-    }
-    return ans;
-}
-
 void Dijkstra(int s) {
-    fill(vis, vis + maxn, false);
     fill(d, d + maxn, inf);
     d[s] = 0;
     for(int i = 1; i <= n + m; i++) {
         int u = -1, min = inf;
         for(int j = 1; j <= n + m; j++) {
             if(vis[j] == false && d[j] < min) {
-                u = j;
                 min = d[j];
+                u = j;
             }
         }
         if(u == -1)
@@ -57,49 +41,64 @@ void Dijkstra(int s) {
     }
 }
 
+int strToInt(string a) {
+    int u = 0;
+    if(a[0] == 'G') {
+        if(a.size() == 2)
+            u = a[1] - '0' + n;
+        else
+            u = n + m;
+    } else {
+        for(int j = 0; j < a.size(); j++)
+            u = u * 10 + a[j] - '0';
+    }
+    return u;
+}
+
 int main() {
     fill(g[0], g[0] + maxn * maxn, inf);
-    scanf("%d%d%d%d", &n, &m, &k, &ds);
-    string p1, p2;
-    int a, b, dist;
+    cin >> n >> m >> k >> s;
+    int dis;
+    string a, b;
     for(int i = 0; i < k; i++) {
-        cin >> p1 >> p2 >> dist;
-        a = getnum(p1);
-        b = getnum(p2);
-        g[a][b] = g[b][a] = dist;
+        int u = 0, v = 0;
+        cin >> a >> b >> dis;
+        u = strToInt(a);
+        v = strToInt(b);
+        g[u][v] = g[v][u] = dis;
     }
-    int ansid = -1;
-    double ansdis = -1, ansavg = inf;
+    int ans;
+    double maxdist = 0, minaverage = inf; // 距离最近house的最远距离 平均距离
     for(int i = n + 1; i <= n + m; i++) {
-        double mindis = inf, avg = 0;
+        fill(vis, vis + maxn, false);
+        double min = inf, average = 0;
+        bool flag = true;
         Dijkstra(i);
         for(int j = 1; j <= n; j++) {
-            if(d[j] > ds) {
-                mindis = -1;
+            if(d[j] > s) { //如果有house在服务范围外直接下一轮循环
+                flag = false;
                 break;
             }
-            if(d[j] < mindis) {
-                mindis = d[j];
-            }
-            avg += 1.0 * d[j];
+            average += d[j] * 1.0 / n;
+            if(d[j] < min)
+                min = d[j];
         }
-        avg = avg / n;
-        if(mindis == -1)
-            continue;
-        if(mindis > ansdis) {
-            ansid = i;
-            ansdis = mindis;
-            ansavg = avg;
-        } else if(mindis == ansdis && avg < ansavg) {
-            ansid = i;
-            ansavg = avg;
-        } //因为是从小到大遍历，所以无需再判断更小的ID
+        if(flag) {
+            if(min > maxdist) {
+                maxdist = min;
+                minaverage = average;
+                ans = i;
+            } else if(min == maxdist && average < minaverage) {
+                minaverage = average;
+                ans = i;
+            } //从小到大遍历 无需再判断序号
+        }
     }
-    if(ansid == -1)
-        printf("No Solution");
-    else {
-        printf("G%d\n", ansid - n);
-        printf("%.1f %.1f", ansdis, ansavg);
+    if(maxdist != 0) {
+        cout << "G" << ans - n << endl;
+        printf("%.1f %.1f", maxdist, minaverage);
+    } else {
+        cout << "No Solution" << endl;
     }
     return 0;
 }
