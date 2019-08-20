@@ -1,25 +1,30 @@
-#include<bits/stdc++.h>
-using namespace std;
-const int N = 1e5 + 5;
+/**
+* 分析：E天超过E公里，等于不能算，最后考虑边界情况1 1应该为0
+**/
 
-int a[N];
+#include <bits/stdc++.h>
+using namespace std;
+const int maxn = 100010;
+
+int h[maxn]; //h[i]代表超过i公里的天数
 
 int main() {
-    int n;
+    int n, d;
     scanf("%d", &n);
-    for(int i = 1; i <= n; i++)
-        scanf("%d", &a[i]);
-    sort(a + 1, a + 1 + n);
-    int now = 1;
-    int E = a[1] - 1;
-    for(int i = a[1]; i <= a[n]; i++) {
-        if(n - now + 1 < i )
-            break;
-        while(a[now] <= i && now <= n)
-            now++;
-        if(n - now + 1 >= i)
-            E = i;
+    for(int i = 1; i <= n; i++) {
+        scanf("%d", &d);
+        if(d <= n)
+            h[d - 1]++;
+        else
+            h[n]++;
     }
-    printf("%d\n", E);
+    for(int i = n - 1; i >= 1; i--)
+        h[i] += h[i + 1];
+    for(int i = n; i >= 0; i--) {
+        if(h[i] >= i) {
+            printf("%d", i);
+            break;
+        }
+    }
     return 0;
 }
