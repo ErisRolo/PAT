@@ -1,4 +1,4 @@
-# 　　　　　　　　　　　　　　 　　　　　　　　PAT Tips
+# PAT Tips
 
 ```c++
 /*
