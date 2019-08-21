@@ -12,7 +12,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 ```
-<div STYLE="page-break-after: always;"></div>
+
 ## 一.数学问题
 
 #### 1.进制转换
@@ -235,7 +235,7 @@ bign change(string s) {
 此部分理解即可，不附模板，代码见晴神宝典p170-p176
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 二.字符串处理
 
 #### 1.字符串的输入输出
@@ -291,7 +291,7 @@ PAT禁用gets()，因此用以下几种替代：① 读取整行不含空格的s
 ③ 还有str.find()返回的是位置下标，是int型数值，不是迭代器，若对这个位置上的字符操作不能直接使用返回值，应该写成str.begin()+返回值，如`int pos = s.find("0"); s.erase(s.begin()+pos);`
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 三.排序
 
 模板固定，如下：
@@ -336,7 +336,7 @@ PAT禁用gets()，因此用以下几种替代：① 读取整行不含空格的s
 ​                                        然后最后一个return前也不要加if判断；加不加if(a!=b)是为了处理相等的情况，即直接return相当于严格的＞和＜，加了if(a!=b)则是≥和≤；其实记住写法即可，写法固定的
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 四.哈希
 
 #### 1.整数hash
@@ -398,7 +398,7 @@ int hashFunc(char S[], int len) {
 ```
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 五.STL
 
 #### 1.vector（可变数组）
@@ -535,7 +535,7 @@ vector<int> name[size]; //一维为定长，表示name[0]~name[size-1]中每一�
 ⑦ `lower_bound(first,last); upper_bound(first,last);`
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 六.线性数据结构（以链表为主）
 
 #### 1.栈（后进先出）
@@ -609,7 +609,7 @@ bool cmp(Node a, Node b) {
 有的需要特判输出0 -1（极少 就1分）
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 七.搜索
 
 #### 1.深度优先搜索（DFS）
@@ -659,7 +659,7 @@ void BFS(int s) {
 和DFS一样，BFS一般不会单独考，常常应用于树、图的遍历，因此在后面的模块结合起来学习，然后再多加练习即可，不必深究单独的考点
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 八.树
 
 #### 1.二叉树的遍历
@@ -965,7 +965,7 @@ while(q.size() > 1) {
 ```
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 九.图
 
 #### 1.图论
@@ -1291,7 +1291,7 @@ int DP(int i) {
 ```
 
 
-<div STYLE="page-break-after: always;"></div>
+
 ## 十.其他算法
 
 #### 1.贪心
