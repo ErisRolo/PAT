@@ -8,8 +8,6 @@
 
 现已施工完毕
 
-**更新总结更为全面的版本，见[PAT Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/PAT%20Tips.md)**
-
 ### :pencil2: STL
 
 - [map](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
@@ -56,3 +54,8 @@
 - [素数问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/素数.md)
 - [其他数学问题](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/math.md)
 - [Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/Tips.md)
+
+
+**更新总结更为全面的版本，见[PAT Tips](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/PAT%20Tips.md)**
+
+
