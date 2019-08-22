@@ -1,101 +1,58 @@
-/*
-* 学长做法
-*/
+/**
+* 分析：快乐模拟，客户进入队列时确定其服务结束时间为当前在该窗口排队的所有人的服务时间之和
+**/
 
-/*
--------------------------------------------
-我开始想不清思路的原因是，找不到顾客到最短队列的方法
-本来觉得应该遍历队列的长度，找个最小的，再加入
-错误地让顾客结束时间以队前所有顾客为基准
-有点像是多个线程，是一个动态过程，这样想让代码控制非常复杂
--------------------------------------------
-关键是要保持一个<每个窗口当前时间>，
-每出一个顾客，更新一下窗口当前时间
-这样就不必以前面的顾客为基准了，是以窗口时间为基准
-
-并且<顾客的结束时间>是等到顾客出队列时再更新
-变成了一个迭代更新过程
-思路也清晰了不少
-*/
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <queue>
-#include <utility>
-#include <sstream>
+#include <bits/stdc++.h>
 using namespace std;
+const int maxk = 1010;
+const int inf = 1000000000;
 
-string intToString(int n, int t) {
-    if (n - t >= 540) //结束服务的时间减服务时间，即开始服务的时间
-        return "Sorry";
-    stringstream ss; // 其实完全不用 sstream 的，杀鸡用牛刀
-    string s;
-    int h = n / 60 + 8;
-    int m = n % 60;
-    if (h < 10)
-        ss << "0"; //补零
-    ss << h << ":";
-    if (m < 10)
-        ss << "0";
-    ss << m;
-    ss >> s;
-    return s;
-}
+struct window {
+    int endTime, popTime; //窗口当前队伍的最后服务时间 队首客户的服务结束时间
+    queue<int> q; //队列
+} w[20];
 
-const int MAX = 2147483647;
+int ans[maxk], needTime[maxk]; //服务结束时间 服务需要时间
 
 int main() {
-    int N, M, K, Q; // 窗口数，每个窗口容量，顾客数，查询数
-    cin >> N >> M >> K >> Q;
-    vector<queue<pair<int, int>>> window(N); // N个窗口, pair 记录顾客时间和序号
-    vector<int> time;                        // 顾客服务时间
-
-    int x;
-    for (int i = 0; i < K; i++) {
-        // K个顾客的服务时间，这里从0开始编号
-        cin >> x;
-        time.push_back(x);
+    int n, m, k, q;
+    scanf("%d%d%d%d", &n, &m, &k, &q);
+    for(int i = 0; i < k; i++)
+        scanf("%d", &needTime[i]);
+    for(int i = 0; i < n; i++)
+        w[i].popTime = w[i].endTime = 8 * 60; //初始化每个窗口时间为8:00
+    int inIndex = 0; //当前第一个未入队的客户编号
+    for(int i = 0; i < min(n * m, k); i++) { //循环条件是min(n*m,k) 循环入队
+        w[inIndex % n].q.push(inIndex);
+        w[inIndex % n].endTime += needTime[inIndex]; //窗口服务结束时间为排队客户服务时间总和
+        if(inIndex < n)
+            w[inIndex].popTime = needTime[inIndex]; //每个窗口的第一个客户 更新popTime
+        ans[inIndex] = w[inIndex % n].endTime; //当前入队的客户的服务结束时间作为答案保存
+        inIndex++;
     }
-
-    int id;
-    for (id = 0; id < M * N && id < K; id++) {
-        // 队列长度为M，窗口为N，最初的顾客入队
-        window[id % N].push(make_pair(time[id], id));
-    }
-
-    vector<int> win_time(N, 0); //每个窗口的当前时间，初始化为0
-    vector<int> end_time(K);    //K个顾客结束服务的时间
-
-    int count = 0;
-    int q_win;
-    int q_time;
-    while (count < K) {
-        q_time = MAX;
-        for (int i = 0; i < N; i++) {
-            //检测哪个窗口最快(窗口当前时间+顾客服务时间)
-            if (!window[i].empty()) {
-                if (win_time[i] + window[i].front().first < q_time) {
-                    q_time = win_time[i] + window[i].front().first;
-                    q_win = i;
-                }
+    for(; inIndex < k; inIndex++) { //处理剩余的客户
+        int idx = -1, minPopTime = inf;
+        for(int i = 0; i < n; i++) { //查找popTime最早的窗口
+            if(w[i].popTime < minPopTime) {
+                idx = i;
+                minPopTime = w[i].popTime;
             }
         }
-        int tmp = window[q_win].front().first + win_time[q_win]; // 最快窗口结束的时间
-        end_time[window[q_win].front().second] = tmp;            // 每次都最快窗口结束，再对顾客结束时间更新
-        win_time[q_win] = tmp;                                   //更新最快窗口的当前时间
-
-        window[q_win].pop(); // 最快窗口出队列
-
-        if (id < K) //新顾客排队
-            window[q_win].push(make_pair(time[id], id));
-        id++;
-        count++;
+        //队首出队 客户入队 更新时间
+        w[idx].q.pop();
+        w[idx].q.push(inIndex);
+        w[idx].endTime += needTime[inIndex];
+        w[idx].popTime += needTime[w[idx].q.front()];
+        ans[inIndex] = w[idx].endTime;
     }
-
-    while (Q--) {
-        cin >> x;
-        cout << intToString(end_time[x - 1], time[x - 1]) << endl; // 查询编号是 1 开始的
+    int query;
+    for(int i = 0; i < q; i++) {
+        scanf("%d", &query);
+        if(ans[query - 1] - needTime[query - 1] >= 17 * 60) {
+            printf("Sorry\n");
+        } else {
+            printf("%02d:%02d\n", ans[query - 1] / 60, ans[query - 1] % 60);
+        }
     }
     return 0;
 }
