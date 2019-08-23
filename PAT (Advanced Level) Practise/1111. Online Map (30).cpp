@@ -1,111 +1,180 @@
+/**
+* 分析：相当于用两次不用的Dijkstra，虽然代码量多但都是复制粘贴，实际很快就搞定了
+*       唯一的坑点在于没读懂题目里的one-way什么意思，后来得知是单行道，但其实这个点没设扣分
+*       我扣的3分是因为计算mint时可能会重复计算，累加多次，所以每次计算前清零，其实每次计算的值是一样的
+*       或者干脆拿出DFS单独算，这种小的点要注意，有时候很可能占更多的分值，一定要仔细
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
-const int inf = 999999999;
+const int maxn = 510;
+const int inf = 10000000;
 
-int n, m, s, des, ansdis1, tempcnt = 0, cnt = inf;
-bool visit[505];
-int elength[505][505], etime[505][505], dis[505], t[505], pre[505];
-vector<int> temppath, prepos[505], anspath1, anspath2;
+int n, m, st, ed;
+int g[maxn][maxn];
+int d[maxn];
+bool vis[maxn];
+vector<int> pre[maxn];
 
-void dfs(int index) {
-    if(index == s) {
-        if(tempcnt < cnt) {
-            anspath2 = temppath;
-            cnt = tempcnt;
-        }
-        return;
-    }
-    tempcnt++;
-    temppath.push_back(index);
-    for(int i = 0; i < prepos[index].size(); i++)
-        dfs(prepos[index][i]);
-    temppath.pop_back();
-    tempcnt--;
-}
+int t[maxn][maxn];
+int dt[maxn];
+bool vist[maxn];
+vector<int> pret[maxn];
 
-int main() {
-    cin >> n >> m;
-    fill(elength[0], elength[0] + 505 * 505, inf);
-    fill(dis, dis + 505, inf);
-    fill(t, t + 505, inf);
-    for(int i = 0; i < m; i++) {
-        int a, b, flag, tempd, tempt;
-        scanf("%d %d %d %d %d", &a, &b, &flag, &tempd, &tempt);
-        elength[a][b] = tempd;
-        etime[a][b] = tempt;
-        if(flag == 0) {
-            elength[b][a] = tempd;
-            etime[b][a] = tempt;
-        }
-    }
-    cin >> s >> des;
-    dis[s] = 0;
-    t[s] = 0;
+
+void Dijkstra(int s) {
+    fill(d, d + maxn, inf);
+    d[s] = 0;
     for(int i = 0; i < n; i++) {
-        int u = -1, minn = inf;
+        int u = -1, min = inf;
         for(int j = 0; j < n; j++) {
-            if(dis[j] < minn && visit[j] == false) {
+            if(vis[j] == false && d[j] < min) {
                 u = j;
-                minn = dis[j];
+                min = d[j];
             }
         }
         if(u == -1)
-            break;
-        visit[u] = true;
+            return;
+        vis[u] = true;
         for(int v = 0; v < n; v++) {
-            if(visit[v] == false && elength[u][v] < inf) {
-                if(dis[u] + elength[u][v] < dis[v]) {
-                    dis[v] = dis[u] + elength[u][v];
-                    t[v] = t[u] + etime[u][v];
-                    pre[v] = u;
-                } else if(dis[u] + elength[u][v] == dis[v] && t[u] + etime[u][v] < t[v]) {
-                    t[v] = t[u] + etime[u][v];
-                    pre[v] = u;
+            if(vis[v] == false && g[u][v] != inf) {
+                if(d[u] + g[u][v] < d[v]) {
+                    d[v] = d[u] + g[u][v];
+                    pre[v].clear();
+                    pre[v].push_back(u);
+                } else if(d[u] + g[u][v] == d[v]) {
+                    pre[v].push_back(u);
                 }
             }
         }
     }
-    ansdis1 = dis[des];
-    int temp = des;
-    while(temp != s) {
-        anspath1.push_back(temp);
-        temp = pre[temp];
+}
+
+int dis;
+int mintime = inf;
+vector<int> path, temppath;
+void DFS(int v) {
+    if(v == st) {
+        temppath.push_back(v);
+        int time = 0, tempdis = 0;
+        for(int i = temppath.size() - 1; i > 0; i--) {
+            int id = temppath[i], nextid = temppath[i - 1];
+            tempdis += g[id][nextid];
+            time += t[id][nextid];
+        }
+        if(time < mintime) {
+            dis = tempdis;
+            mintime = time;
+            path = temppath;
+        }
+        temppath.pop_back();
+        return;
     }
-    fill(visit, visit + 505, false);
-    fill(t, t + 505, inf);
-    t[s] = 0;
+    temppath.push_back(v);
+    for(int i = 0; i < pre[v].size(); i++)
+        DFS(pre[v][i]);
+    temppath.pop_back();
+}
+
+void Dijkstrat(int s) {
+    fill(dt, dt + maxn, inf);
+    dt[s] = 0;
     for(int i = 0; i < n; i++) {
-        int u = -1, minn = inf;
+        int u = -1, min = inf;
         for(int j = 0; j < n; j++) {
-            if(t[j] < minn && visit[j] == false) {
+            if(vist[j] == false && dt[j] < min) {
                 u = j;
-                minn = t[j];
+                min = dt[j];
             }
         }
         if(u == -1)
-            break;
-        visit[u] = true;
+            return;
+        vist[u] = true;
         for(int v = 0; v < n; v++) {
-            if(visit[v] == false && elength[u][v] < inf) {
-                if(t[u] + etime[u][v] < t[v]) {
-                    t[v] = t[u] + etime[u][v];
-                    prepos[v].clear();
-                    prepos[v].push_back(u);
-                } else if(t[u] + etime[u][v] == t[v])
-                    prepos[v].push_back(u);
+            if(vist[v] == false && t[u][v] != inf) {
+                if(dt[u] + t[u][v] < dt[v]) {
+                    dt[v] = dt[u] + t[u][v];
+                    pret[v].clear();
+                    pret[v].push_back(u);
+                } else if(dt[u] + t[u][v] == dt[v]) {
+                    pret[v].push_back(u);
+                }
             }
         }
     }
-    dfs(des);
-    if(anspath2 == anspath1)
-        printf("Distance = %d; Time = %d: %d", ansdis1, t[des], s);
-    else {
-        printf("Distance = %d: %d", ansdis1, s);
-        for(int i = anspath1.size() - 1; i >= 0; --i)
-            printf(" -> %d", anspath1[i]);
-        printf("\nTime = %d: %d", t[des], s);
+}
+
+int mint = 0;
+int minnum = inf;
+vector<int> patht, temppatht;
+void DFST(int v) {
+    if(v == st) {
+        temppatht.push_back(v);
+        int num = temppatht.size();
+        if(num < minnum) {
+            mint = 0; //每次清零
+            for(int i = temppatht.size() - 1; i > 0; i--) {
+                int id = temppatht[i], nextid = temppatht[i - 1];
+                mint += t[id][nextid];
+            }
+            minnum = num;
+            patht = temppatht;
+        }
+        temppatht.pop_back();
+        return;
     }
-    for(int i = anspath2.size() - 1; i >= 0; --i)
-        printf(" -> %d", anspath2[i]);
+    temppatht.push_back(v);
+    for(int i = 0; i < pret[v].size(); i++)
+        DFST(pret[v][i]);
+    temppatht.pop_back();
+}
+
+int main() {
+    fill(g[0], g[0] + maxn * maxn, inf);
+    fill(t[0], t[0] + maxn * maxn, inf);
+    int v1, v2, one, len, tim;
+    scanf("%d%d", &n, &m);
+    for(int i = 0; i < m; i++) {
+        scanf("%d%d%d%d%d", &v1, &v2, &one, &len, &tim);
+        //if(one==1) {
+        //	g[v1][v2]=len;
+        //	t[v1][v2]=tim;
+        //} else {
+        g[v1][v2] = g[v2][v1] = len;
+        t[v1][v2] = t[v2][v1] = tim;
+        //}
+    }
+    scanf("%d%d", &st, &ed);
+    Dijkstra(st);
+    DFS(ed);
+    Dijkstrat(st);
+    DFST(ed);
+    if(path != patht) {
+        printf("Distance = %d: ", dis);
+        for(int i = path.size() - 1; i >= 0; i--) {
+            printf("%d", path[i]);
+            if(i != 0)
+                printf(" -> ");
+            else
+                printf("\n");
+        }
+        printf("Time = %d: ", mint);
+        for(int i = patht.size() - 1; i >= 0; i--) {
+            printf("%d", patht[i]);
+            if(i != 0)
+                printf(" -> ");
+            else
+                printf("\n");
+        }
+    } else {
+        printf("Distance = %d; Time = %d: ", dis, mint);
+        for(int i = path.size() - 1; i >= 0; i--) {
+            printf("%d", path[i]);
+            if(i != 0)
+                printf(" -> ");
+            else
+                printf("\n");
+        }
+    }
     return 0;
 }
