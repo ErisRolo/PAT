@@ -1,55 +1,56 @@
+/**
+* 分析：依次判断每位字符，转成数字后再判断范围，学会stod的使用
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
-const int maxn = 101;
-
-bool Judge(string s, double &x) {
-    int dot = 0, n1 = 0, n2 = 0;
-    int i = 0;
-    if(s[i] == '-')
-        i++;
-    for(; i < s.size(); i++) {
-        if(s[i] == '.') {
-            dot++;
-            if(dot > 1)
-                return 0;
-        } else if(s[i] >= '0' && s[i] <= '9') {
-            if(dot)
-                n2++;
-            else
-                n1++;
-        } else
-            return 0;
-    }
-    if(n2 > 2)
-        return 0;
-    sscanf(s.c_str(), "%lf", &x);
-    if(x >= -1000 && x <= 1000)
-        return 1;
-    return 0;
-}
 
 int main() {
-    int n, cnt = 0;
-    double x, ans = 0;
+    int n;
+    int num = 0;
+    double temp, ans = 0;
     string s;
     cin >> n;
+    getchar();
     for(int i = 0; i < n; i++) {
         cin >> s;
-        if(Judge(s, x)) {
-            cnt++;
-            ans += x;
+        bool isnum = true, hp = false; //默认是数字，么有小数点
+        for(int j = 0; j < s.size(); j++) {
+            if(j == 0 && s[j] == '-') //跳过负数的负号
+                continue;
+            if(!isdigit(s[j]) && s[j] != '.') { //不是数字也不是小数点
+                isnum = false;
+                break;
+            }
+            if(s[j] == '.') {
+                if(hp) { //如果出现两个以上小数点
+                    isnum = false;
+                    break;
+                } else {
+                    hp = true;
+                    if(s.size() - j - 1 > 2) { //如果小数点后超过两位
+                        isnum = false;
+                        break;
+                    }
+                }
+            }
+        }
+        if(isnum) {
+            temp = stod(s);
+            if(temp >= -1000 && temp <= 1000) {
+                ans += temp;
+                num++;
+            } else
+                cout << "ERROR: " << s << " is not a legal number" << endl;
         } else {
-            cout << "ERROR: " << s << " is not a legal number\n";
+            cout << "ERROR: " << s << " is not a legal number" << endl;
         }
     }
-    if(cnt == 1) {
+    if(num == 0)
+        cout << "The average of 0 numbers is Undefined" << endl;
+    if(num == 1)
         printf("The average of 1 number is %.2f\n", ans);
-        return 0;
-    }
-    printf("The average of %d numbers is ", cnt);
-    if(cnt)
-        printf("%.2f\n", ans / cnt);
-    else
-        cout << "Undefined\n";
+    if(num > 1)
+        printf("The average of %d numbers is %.2f\n", num, ans / num);
     return 0;
 }
