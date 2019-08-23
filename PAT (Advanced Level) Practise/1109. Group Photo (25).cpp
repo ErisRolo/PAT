@@ -1,69 +1,59 @@
+/**
+* 分析：PAT自测模拟第一道一遍直接AC的题
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 10010;
 
-int n, k;
-
-struct student {
+struct person {
     string name;
-    int ht;
-} stu[10010];
+    int height;
+} p[maxn];
 
-string stmp[10010] = { "" };
-int u = 0;
-
-bool cmp(student a, student b) {
-    if (a.ht != b.ht)
-        return a.ht > b.ht;
+bool cmp(person a, person b) {
+    if(a.height != b.height)
+        return a.height > b.height;
     else
         return a.name < b.name;
+
 }
 
 int main() {
-    cin >> n >> k;
-    for (int i = 0; i < n; i++) {
-        cin >> stu[i].name >> stu[i].ht;
+    int n, k;
+    scanf("%d%d", &n, &k);
+    for(int i = 0; i < n; i++) {
+        getchar();
+        cin >> p[i].name >> p[i].height;
     }
-    sort(stu, stu + n, cmp);
-    for (int j = 0; j < k; j++) {
-        if (j == 0) {
-            int pvt = (n / k + n % k) / 2;
-            int round = 0;
-            stmp[pvt] = stu[u++].name;
-            while (2 * round + 1 < (n / k + n % k)) {
-                round++;
-                int left = pvt - round, right = pvt + round;
-                if (left >= 0)
-                    stmp[left] = stu[u++].name;
-                if (right < (n / k + n % k))
-                    stmp[right] = stu[u++].name;
-            }
-            for (int v = 0; v < (n / k + n % k); v++) {
-                if (v == 0)
-                    cout << stmp[v];
-                else
-                    cout << " " << stmp[v];
-            }
-            cout << endl;
-        } else {
-            int pvt = (n / k) / 2;
-            int round = 0;
-            stmp[pvt] = stu[u++].name;
-            while (2 * round + 1 < (n / k)) {
-                round++;
-                int left = pvt - round, right = pvt + round;
-                if (left >= 0)
-                    stmp[left] = stu[u++].name;
-                if (right < (n / k))
-                    stmp[right] = stu[u++].name;
-            }
-            for (int v = 0; v < (n / k); v++) {
-                if (v == 0)
-                    cout << stmp[v];
-                else
-                    cout << " " << stmp[v];
-            }
-            cout << endl;
+    sort(p, p + n, cmp);
+    int id = 0;
+    for(int i = 0; i < k; i++) {
+        string order[maxn];
+        int lid = id + 1, rid = id + 2;
+        int num;
+        if(i == 0)
+            num = n - n / k * (k - 1);
+        else
+            num = n / k;
+        int mid = num / 2 + 1;
+        order[mid] = p[id].name;
+        for(int j = mid - 1; j >= 1; j--) {
+            order[j] = p[lid].name;
+            lid += 2;
         }
+        for(int j = mid + 1; j <= num; j++) {
+            order[j] = p[rid].name;
+            rid += 2;
+        }
+        for(int j = 1; j <= num; j++) {
+            cout << order[j];
+            if(j != num)
+                cout << " ";
+            else
+                cout << endl;
+        }
+        id += num; //下一排中间的id等于上一排的人数
     }
     return 0;
 }
