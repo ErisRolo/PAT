@@ -1,62 +1,51 @@
+/**
+* 分析：签到题
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 10000;
+const int maxn = 10010;
 
-int a[N], n, b;
+map<int, string> mp;
+bool ischeck[maxn];
 
-//判断素数
-bool is_p(int a) {
-    if(a == 1)
+bool isPrime(int n) {
+    if(n <= 1)
         return false;
-    for(int i = 2 ; i <= sqrt(a) ; i++) {
-        if(a % i == 0)
+    int sqr = (int)sqrt(1.0 * n);
+    for(int i = 2; i <= sqr; i++) {
+        if(n % i == 0)
             return false;
     }
     return true;
 }
 
 int main() {
+    int n, k, id, q;
     scanf("%d", &n);
-    memset(a, 0, sizeof(a));
-    //信息输入
-    for(int i = 1 ; i <= n ; i++) {
-        scanf("%d", &b);
+    for(int i = 1; i <= n; i++) {
+        scanf("%d", &id);
         if(i == 1)
-            a[b] = 1;
-        else if(is_p(i))
-            a[b] = 2;
+            mp[id] = "Mystery Award";
+        else if(isPrime(i))
+            mp[id] = "Minion";
         else
-            a[b] = 3;
+            mp[id] = "Chocolate";
     }
-    //查询操作
-    scanf("%d", &n);
-    for(int i = 0 ; i < n ; i++) {
-        scanf("%d", &b);
-        if(a[b] == 1) {
-            printf("%04d: Mystery Award\n", b);
-            a[b] = -1;
-            continue;
+    scanf("%d", &k);
+    while(k--) {
+        scanf("%d", &q);
+        printf("%04d: ", q);
+        if(mp.find(q) != mp.end()) {
+            if(!ischeck[q]) {
+                cout << mp[q] << endl;
+                ischeck[q] = true;
+            } else {
+                cout << "Checked" << endl;
+            }
+        } else {
+            cout << "Are you kidding?" << endl;
         }
-        if(a[b] == 2) {
-            printf("%04d: Minion\n", b);
-            a[b] = -1;
-            continue;
-        }
-        if(a[b] == 3) {
-            printf("%04d: Chocolate\n", b);
-            a[b] = -1;
-            continue;
-        }
-        if(a[b] == 0) {
-            printf("%04d: Are you kidding?\n", b);
-            continue;
-        }
-        if(a[b] == -1) {
-            printf("%04d: Checked\n", b);
-            a[b] = -1;
-            continue;
-        }
-
     }
     return 0;
 }
