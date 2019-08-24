@@ -1,54 +1,100 @@
 /**
-* 分析：这题，，不想说啥了。。
-*       还以为能训练map，结果是逻辑题。。。
-*       不过关于元素声明学到了点东西，可以了。。。
+* 分析：逻辑复杂，容易漏细节，第二个测试点改了半天还是不对
+*       不如改成判断不坏的键，坏键需要判断多处，比如前面判断是坏键，后面又出现不坏的情况，不坏的只要有一处不坏就能保证不是坏键
+*       另外统计，不要总想着和前一个字符去比较，这样还要记录，可以直接判断后面k-1个
 **/
 
-#include <cstdio>
-#include <cstring>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-bool isStucked[128];
-bool isNotStucked[128];
-bool isVisit[128];
+bool isgood[128];
+bool haspush[128];
+vector<char> v;
 
 int main() {
-    int k, count = 1;
-    string str;
-    cin >> k ;
-    cin >> str;
-    char stucked = str[0];
-    for(int i = 1; i < str.size(); i++) {
-        if(str[i] == stucked) {
-            count++;
-        } else {
-            //要想着用是不是k的倍数来判断，而不是是不是比k大，因为只有每次输出都是k的整数倍的才是坏键
-            if(count % k == 0 ) {
-                isStucked[str[i - 1]] = true; //暂时设为true
-            } else {
-                isStucked[str[i - 1]] = false; //不能被k整除
-                isNotStucked[str[i - 1]] = true; //只要确定不是坏键，后续输出k的倍数也不能说是坏键
-            }
-            count = 1;
-            stucked = str[i];
+    int k;
+    string s;
+    cin >> k >> s;
+    for(int i = 0; i < s.size(); i++) {
+        int j = i + 1;
+        while(s[j] == s[i] && j < s.size())
+            j++;
+        if((j - i) % k != 0)
+            isgood[s[i]] = true;
+        i = j - 1;
+    }
+    for(int i = 0; i < s.size(); i++) {
+        if(isgood[s[i]] == false && haspush[s[i]] == false) {
+            v.push_back(s[i]);
+            haspush[s[i]] = true;
         }
     }
-    //对最后一个字符特判，防止出现没有统计完次数的情况
-    if(count % k == 0 && isNotStucked[str[str.size() - 1]] == false) {
-        isStucked[str[str.size() - 1]] = true;
-    }
-    for(int i = 0; i < str.size(); i++) {
-        if(isStucked[str[i]] == true && isVisit[str[i]] == false) {
-            cout << str[i];
-            isVisit[str[i]] = true;
-        }
-    }
+    for(auto i : v)
+        cout << i;
     cout << endl;
-    for(int i = 0; i < str.size(); i++) {
-        cout << str[i];
-        if(isStucked[str[i]] == true)
-            i = i + k - 1;
+    for(int i = 0; i < s.size(); i++) {
+        cout << s[i];
+        if(isgood[s[i]] == false)
+            i += k - 1;
     }
     return 0;
 }
+
+
+
+
+
+
+//int temp[256],minlen[256];
+//bool isfalse[256];
+//vector<char> v;
+//
+//int main() {
+//	int k;
+//	string s,ans;
+//	cin>>k>>s;
+//	for(int i=0; i<s.size(); i++)
+//		minlen[s[i]]=1010;
+//	bool flag=false;
+//	for(int i=1; i<s.size(); i++) {
+//		if(s[i]==s[i-1]) { //当前字符与前一个相同
+//			if(flag==false) { //第一次连续，即出现两次的时候
+//				flag=true; //设为正在处理连续字符
+//				temp[s[i]]=2; //已经出现的连续次数为2
+//			} else
+//				temp[s[i]]++; //继续连续继续统计
+//			if(i==s.size()-1)
+//				minlen[s[i]]=min(temp[s[i]],minlen[s[i]]); //对最后一个字符特判
+//		} else { //如果当前字符与前一个不同
+//			if(flag) { //如果前一个字符是连续字符 更新其最小值
+//				minlen[s[i-1]]=min(temp[s[i-1]],minlen[s[i-1]]);
+//				flag=false; //标记没有连续字符
+//			} else
+//				minlen[s[i-1]]=1; //如果前一个字符不是连续字符 将其连续出现最小次数更新为1
+//			if(i==s.size()-1)
+//				minlen[s[i]]=1; //对最后一个字符特判
+//		}
+//	}
+//	for(int i=0; i<s.size(); i++) {
+//		if(minlen[s[i]]%k==0&&isfalse[s[i]]==false) { //minlen为k的倍数的即为坏键，isfalse保证只统计一次
+//			v.push_back(s[i]);
+//			isfalse[s[i]]=true;
+//		}
+//	}
+//	for(auto i:v)
+//		printf("%c",i);
+//	printf("\n");
+//	int num=0;
+//	for(int i=0; i<s.size(); i++) {
+//		ans+=s[i];
+//		if(isfalse[s[i]]) {
+//			num++;
+//			if(num==k) {
+//				ans=ans.substr(0,ans.size()-(k-1));
+//				num=0;
+//			}
+//		}
+//	}
+//	cout<<ans;
+//	return 0;
+//}
