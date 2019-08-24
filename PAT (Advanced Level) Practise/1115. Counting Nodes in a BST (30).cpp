@@ -1,48 +1,67 @@
-#include<bits/stdc++.h>
+/**
+* 分析：BST和BFS，简单题
+**/
+
+#include <bits/stdc++.h>
 using namespace std;
+const int maxn = 1010;
 
-typedef struct node {
-    int data;
-    struct node *lchild, *rchild;
-} node, *Tree;
+int n, x, lowest = 0;
+int d[maxn];
+int ln[maxn];
 
-Tree Create(Tree root, int x) {
+struct Node {
+    int data, lchild, rchild;
+    int level;
+} node[maxn];
 
-    if(root == NULL) {
-        root = new node;
-        root->data = x;
-        root->lchild = root->rchild = NULL;
-        return root;
+int root = -1, idx = 0;
+void insert(int &root, int x) {
+    if(root == -1) {
+        node[idx].data = x;
+        node[idx].lchild = node[idx].rchild = -1;
+        root = idx++;
+        return;
     }
-    if(x <= root->data)
-        root->lchild = Create(root->lchild, x);
+    if(x <= node[root].data)
+        insert(node[root].lchild, x);
     else
-        root->rchild = Create(root->rchild, x);
-    return root;
+        insert(node[root].rchild, x);
 }
 
-int maxdepth = -1;
-vector<int>v(1000);
-
-void dfs(Tree root, int h) {
-    if(root == NULL)
-        return ;
-    maxdepth = max(h, maxdepth);
-    v[h]++;
-    dfs(root->lchild, h + 1);
-    dfs(root->rchild, h + 1);
-    return ;
+void BFS(int root) {
+    queue<int> q;
+    q.push(root);
+    node[root].level = 0;
+    while(!q.empty()) {
+        int front = q.front();
+        q.pop();
+        int lv = node[front].level;
+        ln[lv]++;
+        int l = node[front].lchild;
+        int r = node[front].rchild;
+        if(l != -1) {
+            node[l].level = lv + 1;
+            if(node[l].level > lowest)
+                lowest = node[l].level;
+            q.push(l);
+        }
+        if(r != -1) {
+            node[r].level = lv + 1;
+            if(node[r].level > lowest)
+                lowest = node[r].level;
+            q.push(r);
+        }
+    }
 }
 
 int main() {
-    int n, x;
-    Tree root = NULL;
-    cin >> n;
+    scanf("%d", &n);
     for(int i = 0; i < n; i++) {
-        cin >> x;
-        root = Create(root, x);
+        scanf("%d", &x);
+        insert(root, x);
     }
-    dfs(root, 0);
-    //cout<<maxdepth<<endl;
-    cout << v[maxdepth] << " + " << v[maxdepth - 1] << " = " << v[maxdepth] + v[maxdepth - 1];
+    BFS(root);
+    printf("%d + %d = %d", ln[lowest], ln[lowest - 1], ln[lowest] + ln[lowest - 1]);
+    return 0;
 }
