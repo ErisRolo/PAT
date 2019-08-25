@@ -1,37 +1,46 @@
+/**
+* 分析：简单题，暴力解决
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
-const int maxn = 1e6 + 10;
+const int maxn = 100010;
 
-int couple[maxn], gest[maxn];
-bool f[maxn];
-vector<int>ans;
+int d[maxn];
+int h[maxn];
+bool lonely[maxn];
+set<int> ans;
 
 int main() {
-    int n;
+    fill(lonely, lonely + maxn, true);
+    int n, m, a, b;
     scanf("%d", &n);
-    while (n--) {
-        int x, y;
-        scanf("%d%d", &x, &y);
-        couple[x] = y;
-        couple[y] = x;
+    for(int i = 0; i < n; i++) {
+        scanf("%d%d", &a, &b);
+        h[a] = b;
+        h[b] = a;
     }
-    int m;
     scanf("%d", &m);
+    for(int i = 0; i < m; i++)
+        scanf("%d", &d[i]);
     for(int i = 0; i < m; i++) {
-        scanf("%d", &gest[i]);
-        f[gest[i]] = true;
+        int temp = h[d[i]];
+        for(int j = i; j < m; j++) {
+            if(d[j] == temp) {
+                lonely[temp] = lonely[d[i]] = false;
+            }
+        }
     }
-    for (int i = 0; i < m; i++) {
-        if (f[couple[gest[i]]] == true)
-            continue;
-        else
-            ans.push_back(gest[i]);
+    for(int i = 0; i < m; i++) {
+        if(lonely[d[i]] == true)
+            ans.insert(d[i]);
     }
-    sort(ans.begin(), ans.end());
-    printf("%d\n", ans.size());
-    for (int i = 0; i < ans.size(); i++) {
-        printf("%05d", ans[i]);
-        if (i != ans.size() - 1)
+    int num = ans.size(), i = 0;
+    printf("%d\n", num);
+    for(auto it = ans.begin(); it != ans.end(); it++) {
+        printf("%05d", *it);
+        i++;
+        if(i != num)
             printf(" ");
     }
     return 0;
