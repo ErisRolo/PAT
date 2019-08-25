@@ -1,19 +1,15 @@
 /**
-* 分析：判断一棵AVL是不是完全二叉树，要求输出层序遍历
-*       AVL部分直接写模板即可
-*       判断完全二叉树，则根据层序遍历，第一个叶子结点后出现的结点都是叶子结点，否则就不是完全二叉树
+* 分析：完全平衡二叉树，拼手速
 **/
 
-#include <cstdio>
-#include <queue>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
-const int maxn = 30;
+const int maxn = 21;
 
-int n, data, root = -1;
+int n, d, root = -1;
 
 struct Node {
-    int data;
+    int v;
     int lchild, rchild;
     int height;
 } node[maxn];
@@ -21,8 +17,7 @@ struct Node {
 int getHeight(int root) {
     if(root == -1)
         return 0;
-    else
-        return node[root].height;
+    return node[root].height;
 }
 
 int getBalanceFactor(int root) {
@@ -51,33 +46,33 @@ void R(int &root) {
     root = temp;
 }
 
-int index = 0;
-void insert(int &root, int x) {
+int idx = 0;
+void insert(int &root, int v) {
     if(root == -1) {
-        node[index].data = x;
-        node[index].height = 1;
-        node[index].lchild = node[index].rchild = -1;
-        root = index++;
+        node[idx].v = v;
+        node[idx].lchild = node[idx].rchild = -1;
+        node[idx].height = 1;
+        root = idx++;
         return;
     }
-    if(x < node[root].data) {
-        insert(node[root].lchild, x);
+    if(v < node[root].v) {
+        insert(node[root].lchild, v);
         updateHeight(root);
         if(getBalanceFactor(root) == 2) {
             if(getBalanceFactor(node[root].lchild) == 1) {
                 R(root);
-            } else if (getBalanceFactor(node[root].lchild) == -1) {
+            } else if(getBalanceFactor(node[root].lchild) == -1) {
                 L(node[root].lchild);
                 R(root);
             }
         }
-    } else  {
-        insert(node[root].rchild, x);
+    } else {
+        insert(node[root].rchild, v);
         updateHeight(root);
         if(getBalanceFactor(root) == -2) {
             if(getBalanceFactor(node[root].rchild) == -1) {
                 L(root);
-            } else if (getBalanceFactor(node[root].rchild) == 1) {
+            } else if(getBalanceFactor(node[root].rchild) == 1) {
                 R(node[root].rchild);
                 L(root);
             }
@@ -85,57 +80,48 @@ void insert(int &root, int x) {
     }
 }
 
-bool isleaf(int root) {
-    if(2 * (node[root].lchild + 1) > n)
-        return true;
-    else
-        return false;
-}
-
-int cnt = 0;
-bool haschild, iscompelete = true;
+int num = 0;
+bool flag = false, isCBT = true;
 void BFS(int root) {
     queue<int> q;
     q.push(root);
-    if(node[root].lchild != -1 || node[root].rchild != -1)
-        haschild = true;
-    else
-        haschild = false;
     while(!q.empty()) {
-        int temp = q.front();
+        int front = q.front();
         q.pop();
-        cnt++;
-        if(cnt < n)
-            printf("%d ", node[temp].data);
+        printf("%d", node[front].v);
+        num++;
+        if(num != n)
+            printf(" ");
         else
-            printf("%d\n", node[temp].data);
-        if(node[temp].lchild != -1) {
-            if(haschild == false)
-                iscompelete = false;
-            q.push(node[temp].lchild);
+            printf("\n");
+        int lc = node[front].lchild;
+        int rc = node[front].rchild;
+        if(flag == false) {
+            if((lc != -1 && rc == -1) || (lc == -1 && rc == -1))
+                flag = true;
         } else {
-            haschild = false;
+            if(lc != -1 || rc != -1)
+                isCBT = false;
         }
-        if(node[temp].rchild != -1) {
-            if(haschild == false)
-                iscompelete = false;
-            q.push(node[temp].rchild);
-        } else {
-            haschild = false;
-        }
+        if(lc == -1 && rc != -1)
+            isCBT = false;
+        if(lc != -1)
+            q.push(lc);
+        if(rc != -1)
+            q.push(rc);
     }
 }
 
 int main() {
     scanf("%d", &n);
     for(int i = 0; i < n; i++) {
-        scanf("%d", &data);
-        insert(root, data);
+        scanf("%d", &d);
+        insert(root, d);
     }
     BFS(root);
-    if(iscompelete)
-        printf("YES");
+    if(isCBT)
+        printf("YES\n");
     else
-        printf("NO");
+        printf("NO\n");
     return 0;
 }
