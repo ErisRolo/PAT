@@ -1,55 +1,81 @@
+/**
+* 分析：中序后序建树，层序遍历交替输出
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 31;
 
-vector<int> in, post, result[35];
-int n, tree[35][2], root;
+int n;
+int in[maxn], post[maxn];
+vector<int> lv[maxn];
 
-struct node {
-    int index, depth;
-};
+struct Node {
+    int data, lchild, rchild;
+    int level;
+} node[maxn];
 
-void dfs(int &index, int inLeft, int inRight, int postLeft, int postRight) {
-    if (inLeft > inRight)
-        return;
-    index = postRight;
-    int i = 0;
-    while (in[i] != post[postRight])
-        i++;
-    dfs(tree[index][0], inLeft, i - 1, postLeft, postLeft + (i - inLeft) - 1);
-    dfs(tree[index][1], i + 1, inRight, postLeft + (i - inLeft), postRight - 1);
+int create(int inl, int inr, int postl, int postr) {
+    if(postl > postr)
+        return -1;
+    int root = postr;
+    node[root].data = post[postr];
+    int k;
+    for(k = inl; k <= inr; k++) {
+        if(in[k] == post[postr])
+            break;
+    }
+    int numleft = k - inl;
+    node[root].lchild = create(inl, k - 1, postl, postl + numleft - 1);
+    node[root].rchild = create(k + 1, inr, postl + numleft, postr - 1);
+    return root;
 }
 
-void bfs() {
-    queue<node> q;
-    q.push(node{root, 0});
-    while (!q.empty()) {
-        node temp = q.front();
+int lvn;
+void BFS(int root) {
+    queue<int> q;
+    q.push(root);
+    node[root].level = 0;
+    while(!q.empty()) {
+        int front = q.front();
         q.pop();
-        result[temp.depth].push_back(post[temp.index]);
-        if (tree[temp.index][0] != 0)
-            q.push(node{tree[temp.index][0], temp.depth + 1});
-        if (tree[temp.index][1] != 0)
-            q.push(node{tree[temp.index][1], temp.depth + 1});
+        lvn = node[front].level; //记录最大层数
+        lv[node[front].level].push_back(front);
+        if(node[front].lchild != -1) {
+            q.push(node[front].lchild);
+            node[node[front].lchild].level = node[front].level + 1;
+        }
+        if(node[front].rchild != -1) {
+            q.push(node[front].rchild);
+            node[node[front].rchild].level = node[front].level + 1;
+        }
     }
 }
 
 int main() {
-    cin >> n;
-    in.resize(n + 1), post.resize(n + 1);
-    for (int i = 1; i <= n; i++)
-        cin >> in[i];
-    for (int i = 1; i <= n; i++)
-        cin >> post[i];
-    dfs(root, 1, n, 1, n);
-    bfs();
-    printf("%d", result[0][0]);
-    for (int i = 1; i < 35; i++) {
-        if (i % 2 == 1) {
-            for (int j = 0; j < result[i].size(); j++)
-                printf(" %d", result[i][j]);
+    scanf("%d", &n);
+    for(int i = 0; i < n; i++)
+        scanf("%d", &in[i]);
+    for(int i = 0; i < n; i++)
+        scanf("%d", &post[i]);
+    int root = create(0, n - 1, 0, n - 1);
+    BFS(root);
+    int num = 0;
+    for(int i = 0; i <= lvn; i++) {
+        if(i % 2 != 0) {
+            for(int j = 0; j < lv[i].size(); j++) {
+                printf("%d", node[lv[i][j]].data);
+                num++;
+                if(num != n)
+                    printf(" ");
+            }
         } else {
-            for (int j = result[i].size() - 1; j >= 0; j--)
-                printf(" %d", result[i][j]);
+            for(int j = lv[i].size() - 1; j >= 0; j--) {
+                printf("%d", node[lv[i][j]].data);
+                num++;
+                if(num != n)
+                    printf(" ");
+            }
         }
     }
     return 0;
