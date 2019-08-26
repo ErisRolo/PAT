@@ -1,51 +1,59 @@
-#include<bits/stdc++.h>
+/**
+* 分析：欧拉回路一定是连通图，单独判断这一点
+**/
+
+#include <bits/stdc++.h>
 using namespace std;
 const int maxn = 510;
 
-int G[maxn][maxn], degree[maxn];
-bool vis[maxn];
 int n, m;
+int g[maxn][maxn];
+int degree[maxn];
+bool vis[maxn];
 
-void DFS(int v) {
-    vis[v] = true;
-    for(int i = 1; i <= n; i++) {
-        if(!vis[i] && G[v][i])
-            DFS(i);
+void DFS(int u) {
+    vis[u] = true;
+    for(int v = 1; v <= n; v++) {
+        if(g[u][v] == 1 && vis[v] == false) {
+            DFS(v);
+        }
     }
 }
 
-int Calblock() {
-    int cnt = 0;
+int num = 0;
+void DFSTrave() {
     for(int i = 1; i <= n; i++) {
-        if(!vis[i])
-            DFS(i), cnt++;
+        if(vis[i] == false) {
+            DFS(i);
+            num++;
+        }
     }
-    return cnt;
 }
 
 int main() {
+    int a, b;
     scanf("%d%d", &n, &m);
-    while(m--) {
-        int x, y;
-        scanf("%d%d", &x, &y);
-        G[x][y] = G[y][x] = 1;
-        degree[x]++, degree[y]++;
+    for(int i = 0; i < m; i++) {
+        scanf("%d%d", &a, &b);
+        g[a][b] = g[b][a] = 1;
+        degree[a]++, degree[b]++;
     }
-    int blocks = Calblock();
     int even = 0, odd = 0;
     for(int i = 1; i <= n; i++) {
-        printf("%d", degree[i]);
-        if(i != n)
-            printf(" ");
         if(degree[i] % 2 == 0)
             even++;
         else
             odd++;
+        printf("%d", degree[i]);
+        if(i != n)
+            printf(" ");
+        else
+            printf("\n");
     }
-    printf("\n");
-    if(blocks == 1 && even == n)
+    DFSTrave();
+    if(num == 1 && even == n)
         printf("Eulerian\n");
-    else if(blocks == 1 && odd == 2)
+    else if(num == 1 && even == n - 2 && odd == 2)
         printf("Semi-Eulerian\n");
     else
         printf("Non-Eulerian\n");
