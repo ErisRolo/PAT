@@ -1,38 +1,40 @@
+/**
+* 分析：学习set插入结构体和运算符重载的定义格式，以及不能直接修改set内的元素，需要删除并重新插入
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
-const int maxn = 5e4 + 10;
+const int maxn = 50010;
 
 struct node {
-    int index, times;
-    bool operator<(const node&x)const {
-        return times == x.times ? index<x.index : times > x.times;
+    int id, cnt;
+    bool operator < (const node &a)const {
+        return cnt != a.cnt ? cnt > a.cnt : id < a.id;
     }
-    node(int _x, int _y) : index(_x), times(_y) {}
 };
 
-int timet[maxn];
-set<node>s;
+set<node> st;
+int cnt[maxn]; //记录次数
 
 int main() {
-    int n, k, x;
+    int n, k, q;
     scanf("%d%d", &n, &k);
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &x);
-        if (i == 0) {
-            timet[x]++;
-            s.insert(node(x, timet[x]));
-            continue;
+    scanf("%d", &q);
+    st.insert({q, 1}); //处理第一个输入
+    cnt[q] = 1;
+    for(int i = 1; i < n; i++) {
+        scanf("%d", &q);
+        printf("%d:", q);
+        int num = 0;
+        for(auto it = st.begin(); it != st.end() && num < k; it++) {
+            printf(" %d", it->id);
+            num++;
         }
-        printf("%d:", x);
-        int cnt = 0;
-        for (auto it = s.begin(); cnt < k && it != s.end(); it++, cnt++)
-            printf(" %d", it->index);
         printf("\n");
-        auto it = s.find(node(x, timet[x]));
-        if (it != s.end())
-            s.erase(it);
-        timet[x]++;
-        s.insert(node(x, timet[x]));
+        if(cnt[q] > 0) //如果已存在 删除
+            st.erase({q, cnt[q]});
+        cnt[q]++;
+        st.insert({q, cnt[q]});
     }
     return 0;
 }
