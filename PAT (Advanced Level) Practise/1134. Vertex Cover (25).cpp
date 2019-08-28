@@ -1,33 +1,41 @@
+/**
+* 分析：点覆盖，set和pair的使用，对STL的各种技巧一定要熟悉
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 10010;
+const int maxm = 10010;
+
+int n, m, k;
+vector<int> adj[maxn];
+set<pair<int, int> > st;
 
 int main() {
-    int n, m, k, nv, a, b, num;
+    int a, b;
     scanf("%d%d", &n, &m);
-    vector<int> v[n];
-    for (int i = 0; i < m; i++) {
+    for(int i = 0; i < m; i++) {
         scanf("%d%d", &a, &b);
-        v[a].push_back(i);
-        v[b].push_back(i);
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
     scanf("%d", &k);
-    for (int i = 0; i < k; i++) {
-        scanf("%d", &nv);
-        int flag = 0;
-        vector<int> hash(m, 0);
-        for (int j = 0; j < nv; j++) {
-            scanf("%d", &num);
-            for (int t = 0; t < v[num].size(); t++)
-                hash[v[num][t]] = 1;
-        }
-        for (int j = 0; j < m; j++) {
-            if (hash[j] == 0) {
-                printf("No\n");
-                flag = 1;
-                break;
+    int q, u;
+    while(k--) {
+        scanf("%d", &q);
+        st.clear();
+        for(int i = 0; i < q; i++) {
+            scanf("%d", &u);
+            for(int j = 0; j < adj[u].size(); j++) {
+                int v = adj[u][j];
+                st.insert({u, v});
+                st.insert({v, u});
             }
         }
-        if (flag == 0) printf("Yes\n");
+        if(st.size() == 2 * m)
+            printf("Yes\n");
+        else
+            printf("No\n");
     }
     return 0;
 }
