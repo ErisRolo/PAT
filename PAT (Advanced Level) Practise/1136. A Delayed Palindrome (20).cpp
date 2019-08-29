@@ -1,58 +1,75 @@
 /**
-* 分析：考查大整数运算和字符串处理，要熟练使用reverse等STL函数
+* 分析：1000位 大整数运算
+*       也可以看成判断回文字符串，字符串相加，将判断改为reverse后是否与原来相等，字符串相加和大整数相加相同
 **/
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
+const int maxn = 1010;
 
-bool judge(string s) {
-    for(int i = 0; i < s.size() / 2; i++) {
-        if(s[i] != s[s.size() - i - 1]) {
+struct bign {
+    int d[maxn];
+    int len;
+    bign() {
+        fill(d, d + maxn, 0);
+        len = 0;
+    }
+};
+
+bign strtobign(string s) {
+    bign a;
+    for(int i = s.size() - 1; i >= 0; i--)
+        a.d[a.len++] = s[i] - '0';
+    return a;
+}
+
+string bigntostr(bign a) {
+    string s;
+    for(int i = a.len - 1; i >= 0; i--)
+        s += a.d[i] + '0';
+    return s;
+}
+
+bign add(bign a, bign b) {
+    bign c;
+    int carry = 0;
+    for(int i = 0; i < a.len || i < b.len; i++) {
+        int temp = a.d[i] + b.d[i] + carry;
+        c.d[c.len++] = temp % 10;
+        carry = temp / 10;
+    }
+    if(carry != 0)
+        c.d[c.len++] = carry;
+    return c;
+}
+
+bool isright(string s) {
+    int k = s.size() - 1;
+    for(int i = 0; i <= k; i++) {
+        if(s[i] != s[k - i])
             return false;
-        }
     }
     return true;
 }
 
 int main() {
     int cnt = 0;
-    bool flag = false;
-    string s, ns, ans;
+    string s;
     cin >> s;
-    int temp, carry = 0;
-    while(cnt < 10) {
-        if(judge(s) == false) {
-            cnt++;
-            ns = s;
-            reverse(ns.begin(), ns.end());
-            for(int i = 0; i < s.size(); i++) {
-                temp = (s[i] - '0') + (ns[i] - '0') + carry;
-                carry = 0;
-                if(temp >= 10) {
-                    temp -= 10;
-                    carry = 1;
-                }
-                ans += (char)(temp + '0');
-            }
-            if(carry == 1) {
-                ans += '1';
-                carry = 0;
-            }
-            reverse(ans.begin(), ans.end());
-            cout << s << " + " << ns << " = " << ans << endl;
-            s = ans;
-            ans = "";
-        } else {
-            flag = true;
-            break;
-        }
+    while(isright(s) == false && cnt < 10) {
+        bign a = strtobign(s);
+        cout << s << " + ";
+        reverse(s.begin(), s.end());
+        bign b = strtobign(s);
+        cout << s << " = ";
+        bign c = add(a, b);
+        s = bigntostr(c);
+        cout << s << endl;
+        cnt++;
     }
-    if(flag)
-        cout << s << " is a palindromic number.";
+    if(isright(s))
+        cout << s << " is a palindromic number." << endl;
     else
-        cout << "Not found in 10 iterations.";
+        cout << "Not found in 10 iterations." << endl;
     return 0;
 }
