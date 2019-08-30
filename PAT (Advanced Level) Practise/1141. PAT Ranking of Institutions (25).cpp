@@ -1,53 +1,66 @@
-#include <algorithm>
-#include <cctype>
-#include <vector>
-#include <iostream>
-#include <unordered_map>
+/**
+* 分析：分数分开统计，最后再除，不然有一个点WA
+**/
+
+#include <bits/stdc++.h>
 using namespace std;
-struct node {
-    string school;
-    int tws, ns;
-};
-bool cmp(node a, node b) {
-    if (a.tws != b.tws)
-        return a.tws > b.tws;
-    else if (a.ns != b.ns)
-        return a.ns < b.ns;
+const int maxn = 100010;
+
+struct Rank {
+    string name;
+    int score, sa, sb, st;
+    int num;
+    int r;
+    Rank() {
+        score = 0, sa = 0, sb = 0, st = 0;
+        num = 0;
+    }
+} R[maxn];
+
+bool cmp(Rank a, Rank b) {
+    if(a.score != b.score)
+        return a.score > b.score;
+    else if(a.num != b.num)
+        return a.num < b.num;
     else
-        return a.school < b.school;
+        return a.name < b.name;
 }
+
+map<string, int> mp; //为学校编号
+
 int main() {
-    int n;
-    scanf("%d", &n);
-    unordered_map<string, int> cnt;
-    unordered_map<string, double> sum;
-    for (int i = 0; i < n; i++) {
-        string id, school;
-        cin >> id;
-        double score;
-        scanf("%lf", &score);
-        cin >> school;
-        for (int j = 0; j < school.length(); j++)
-            school[j] = tolower(school[j]);
-        if (id[0] == 'B')
-            score = score / 1.5;
-        else if (id[0] == 'T')
-            score = score * 1.5;
-        sum[school] += score;
-        cnt[school]++;
+    int n, score, cnt = 0;
+    string id, sch;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        cin >> id >> score >> sch;
+        transform(sch.begin(), sch.end(), sch.begin(), ::tolower);
+        if(mp.find(sch) == mp.end()) {
+            mp[sch] = cnt;
+            R[cnt].name = sch;
+            cnt++;
+        }
+        if(id[0] == 'A')
+            R[mp[sch]].sa += score;
+        else if(id[0] == 'B')
+            R[mp[sch]].sb += score;
+        else if(id[0] == 'T')
+            R[mp[sch]].st += score;
+        R[mp[sch]].score += score;
+        R[mp[sch]].num++;
     }
-    vector<node> ans;
-    for (auto it = cnt.begin(); it != cnt.end(); it++)
-        ans.push_back(node{it->first, (int)sum[it->first], cnt[it->first]});
-    sort(ans.begin(), ans.end(), cmp);
-    int rank = 0, pres = -1;
-    printf("%d\n", (int)ans.size());
-    for (int i = 0; i < ans.size(); i++) {
-        if (pres != ans[i].tws) rank = i + 1;
-        pres = ans[i].tws;
-        printf("%d ", rank);
-        cout << ans[i].school;
-        printf(" %d %d\n", ans[i].tws, ans[i].ns);
+    for(int i = 0; i < cnt; i++)
+        R[i].score = R[i].sb / 1.5 + R[i].sa + R[i].st * 1.5;
+    sort(R, R + cnt, cmp);
+    R[0].r = 1;
+    for(int i = 1; i < cnt; i++) {
+        if(R[i].score == R[i - 1].score)
+            R[i].r = R[i - 1].r;
+        else
+            R[i].r = i + 1;
     }
+    cout << cnt << endl;
+    for(int i = 0; i < cnt; i++)
+        cout << R[i].r << " " << R[i].name << " " << R[i].score << " " << R[i].num << endl;
     return 0;
 }
