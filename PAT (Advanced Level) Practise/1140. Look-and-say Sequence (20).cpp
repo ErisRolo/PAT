@@ -1,39 +1,31 @@
 /**
-* 分析：题不难，主要得读懂题意，这个没办法。。。
+* 分析：按连续的字符算
 **/
 
-#include <cstdio>
-#include <iostream>
-#include <cstring>
+#include <bits/stdc++.h>
 using namespace std;
 
-string ans, temp;
-int n, cnt = 0;
-bool flag[10];
-
-string inttostr(int d) {
-    string str;
-    while(d) {
-        str += d % 10 + '0';
-        d /= 10;
-    }
-    return str;
-}
-
 int main() {
-    cin >> ans >> n;
-    for(int k = 1; k < n; k++) {
-        int i, j;
-        temp = "";
-        for( i = 0; i < ans.size(); i = j) {
-            for( j = i; j < ans.size() && ans[j] == ans[i]; j++) {
-                cnt++;
+    int n;
+    char d;
+    string s;
+    cin >> d >> n;
+    s += d;
+    for(int i = 2; i <= n; i++) {
+        string temp;
+        for(int j = 0; j < s.size(); j++) {
+            int num = 1, k = j;
+            while(s[k + 1] == s[k]) {
+                num++;
+                k++;
             }
-            temp += ans[i] + inttostr(cnt);
-            cnt = 0;
+            temp += s[j];
+            temp += to_string(num);
+            j += num - 1;
+            num = 1;
         }
-        ans = temp;
+        s = temp;
     }
-    cout << ans;
+    cout << s;
     return 0;
 }
