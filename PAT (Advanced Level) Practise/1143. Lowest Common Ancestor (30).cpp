@@ -1,54 +1,69 @@
 /**
-* 分析：已知BST先序序列求任意两结点的最近公共祖先
-*       记住规律：遍历先序序列，第一个满足大于等于其中一结点并小于等于另一结点的结点即为所求
-*       此题用bool数组标记会有一个段错误和一个测试点无法通过，扣5分，改成map可AC
-*       切记不要轻易用bool数组
+* 分析：给BST，找LCA，一开始在输入的时候，选择先判断大小，交换次序输出，结果只有19分
+*       debug发现一开始的写法，总是认为较大的数可能为根结点，是被样例那个只有左孩子的子树误导了，但如果出现只有右孩子的子树就会出错
+*       所以i应该>=a或者<=b，改正后为20分，debug发现结果对了但输出有错，继续改正，得29分
+*       继续dubug发现两个数相同时输出有错，给出一组实用样例 2 8 7 9 4 -3 0 9
+*       注释部分为不加交换输出更简洁的代码
 **/
 
-#include <cstdio>
-#include <map>
+#include <bits/stdc++.h>
 using namespace std;
-const int maxn = 10010;
 
-int m, n;
-int pre[maxn];
-//bool flag[maxn];
+int m, n, x, a, b;
+bool isswap;
+vector<int> tree;
 map<int, bool> mp;
 
 int main() {
     scanf("%d%d", &m, &n);
-    int temp;
     for(int i = 0; i < n; i++) {
-        scanf("%d", &temp);
-        pre[i] = temp;
-        //flag[temp] = true;
-        mp[temp] = true;
+        scanf("%d", &x);
+        tree.push_back(x);
+        mp[x] = true;
     }
-    int u, v, r;
-    for(int i = 0; i < m; i++) {
-        scanf("%d%d", &u, &v);
-        for(int j = 0; j < n; j++) {
-            r = pre[j];
-            if((r >= u && r <= v) || (r <= u && r >= v))
-                break;
-        }
-//        if(flag[u] == false && flag[v] == false) {
-//            printf("ERROR: %d and %d are not found.\n", u, v);
-//        } else if(flag[u] == false || flag[v] == false) {
-//            printf("ERROR: %d is not found.\n", flag[u] == false ? u : v);
-//        } else if(r == u || r == v) {
-//            printf("%d is an ancestor of %d.\n", r, r == u ? v : u);
-//        } else {
-//            printf("LCA of %d and %d is %d.\n", u, v, r);
-//        }
-        if(mp[u] == false && mp[v] == false) {
-            printf("ERROR: %d and %d are not found.\n", u, v);
-        } else if(mp[u] == false || mp[v] == false) {
-            printf("ERROR: %d is not found.\n", mp[u] == false ? u : v);
-        } else if(r == u || r == v) {
-            printf("%d is an ancestor of %d.\n", r, r == u ? v : u);
+    while(m--) {
+        scanf("%d%d", &a, &b);
+        if(mp.find(a) != mp.end() && mp.find(b) != mp.end()) {
+            isswap = false;
+            if(a > b) {
+                swap(a, b);
+                isswap = true;
+            }
+            for(auto i : tree) {
+//				if((i>=a&&i<=b)||(i<=a&&i>=b)) {
+//					if(i==a||i==b) {
+//						if(i==a)
+//							printf("%d is an ancestor of %d.\n",a,b);
+//						else
+//							printf("%d is an ancestor of %d.\n",b,a);
+//
+//					} else
+//						printf("LCA of %d and %d is %d.\n",a,b,i);
+//				}
+                if(i >= a && i <= b) {
+                    if(i != a && i != b) {
+                        if(isswap)
+                            printf("LCA of %d and %d is ", b, a);
+                        else
+                            printf("LCA of %d and %d is ", a, b);
+                        printf("%d.\n", i);
+                    } else {
+                        if(i == a)
+                            printf("%d is an ancestor of %d.\n", a, b);
+                        else if(i == b)
+                            printf("%d is an ancestor of %d.\n", b, a);
+                    }
+                    break;
+                }
+            }
         } else {
-            printf("LCA of %d and %d is %d.\n", u, v, r);
+            if(mp.find(a) == mp.end() && mp.find(b) == mp.end()) {
+                printf("ERROR: %d and %d are not found.\n", a, b);
+            } else if(mp.find(a) == mp.end() && mp.find(b) != mp.end()) {
+                printf("ERROR: %d is not found.\n", a);
+            } else if(mp.find(a) != mp.end() && mp.find(b) == mp.end()) {
+                printf("ERROR: %d is not found.\n", b);
+            }
         }
     }
     return 0;
