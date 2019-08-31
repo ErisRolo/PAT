@@ -1,53 +1,102 @@
+/**
+* 分析：大排序的输入输出一定要尽量用printf和scanf，慎用cin和cout
+*       如果TLE，尝试把用到的静态数组换成vector或者vector换成静态数组
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 10010;
 
-struct node {
-    string t;
-    int value;
+int n, m, score, type, cnt, sum;
+string s, item;
+bool flag;
+unordered_map<string, int> mp;
+
+struct card {
+    string level, site, date, testee, num;
+    int score;
+} c[maxn];
+
+struct sitenum {
+    string site;
+    int num;
 };
 
-bool cmp(const node &a, const node &b) {
-    return a.value != b.value ? a.value > b.value : a.t < b.t;
+bool cmp1(card a, card b) {
+    if(a.score != b.score)
+        return a.score > b.score;
+    else
+        return a.num < b.num;
+}
+
+bool cmp3(sitenum a, sitenum b) {
+    if(a.num != b.num)
+        return a.num > b.num;
+    else
+        return a.site < b.site;
 }
 
 int main() {
-    int n, k, num;
-    string s;
-    cin >> n >> k;
-    vector<node> v(n);
-    for (int i = 0; i < n; i++)
-        cin >> v[i].t >> v[i].value;
-    for (int i = 1; i <= k; i++) {
-        cin >> num >> s;
-        printf("Case %d: %d %s\n", i, num, s.c_str());
-        vector<node> ans;
-        int cnt = 0, sum = 0;
-        if (num == 1) {
-            for (int j = 0; j < n; j++)
-                if (v[j].t[0] == s[0])
-                    ans.push_back(v[j]);
-        } else if (num == 2) {
-            for (int j = 0; j < n; j++) {
-                if (v[j].t.substr(1, 3) == s) {
-                    cnt++;
-                    sum += v[j].value;
+    scanf("%d%d", &n, &m);
+    for(int i = 0; i < n; i++) {
+        cin >> s;
+        scanf("%d", &score);
+        c[i].level = s[0];
+        c[i].site = s.substr(1, 3);
+        c[i].date = s.substr(4, 6);
+        c[i].num = s;
+        c[i].score = score;
+    }
+    for(int i = 1; i <= m; i++) {
+        scanf("%d", &type);
+        cin >> item;
+        printf("Case %d: %d %s\n", i, type, item.c_str());
+        flag = false;
+        if(type == 1) {
+            sort(c, c + n, cmp1);
+            for(int j = 0; j < n; j++) {
+                if(c[j].level == item) {
+                    printf("%s %d\n", c[j].num.c_str(), c[j].score);
+                    flag = true;
                 }
             }
-            if (cnt != 0)
+            if(!flag)
+                printf("NA\n");
+        } else if(type == 2) {
+            cnt = 0, sum = 0;
+            for(int j = 0; j < n; j++) {
+                if(c[j].site == item) {
+                    cnt++;
+                    sum += c[j].score;
+                    flag = true;
+                }
+            }
+            if(flag)
                 printf("%d %d\n", cnt, sum);
-        } else if (num == 3) {
-            unordered_map<string, int> m;
-            for (int j = 0; j < n; j++)
-                if (v[j].t.substr(4, 6) == s)
-                    m[v[j].t.substr(1, 3)]++;
-            for (auto it : m)
-                ans.push_back({it.first, it.second});
+            else
+                printf("NA\n");
+        } else if(type == 3) {
+            cnt = 0;
+            mp.clear();
+            vector<sitenum> sn;
+            for(int j = 0; j < n; j++) {
+                if(c[j].date == item) {
+                    flag = true;
+                    if(mp.find(c[j].site) == mp.end()) {
+                        mp[c[j].site] = cnt;
+                        sn.push_back({c[j].site, 1});
+                        cnt++;
+                    } else
+                        sn[mp[c[j].site]].num++;
+                }
+            }
+            if(flag) {
+                sort(sn.begin(), sn.end(), cmp3);
+                for(int j = 0; j < cnt; j++)
+                    printf("%s %d\n", sn[j].site.c_str(), sn[j].num);
+            } else
+                printf("NA\n");
         }
-        sort(ans.begin(), ans.end(), cmp);
-        for (int j = 0; j < ans.size(); j++)
-            printf("%s %d\n", ans[j].t.c_str(), ans[j].value);
-        if (((num == 1 || num == 3) && ans.size() == 0) || (num == 2 && cnt == 0))
-            printf("NA\n");
     }
     return 0;
 }
