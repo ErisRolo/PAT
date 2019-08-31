@@ -2,13 +2,12 @@
 * 分析：Hash平方检测法标准写法
 **/
 
-#include <cstdio>
-#include <cmath>
+#include <bits/stdc++.h>
+using namespace std;
 const int maxn = 10010;
 
-int Tsize, n;
-int hash[maxn];
-bool flag = false;
+int Tsize, n, key;
+int h[maxn];
 
 bool isPrime(int n) {
     if(n <= 1)
@@ -21,37 +20,24 @@ bool isPrime(int n) {
     return true;
 }
 
-int H(int key) {
-    return key % Tsize;
-}
-
 int main() {
-    int temp, h;
     scanf("%d%d", &Tsize, &n);
     while(!isPrime(Tsize))
         Tsize++;
     for(int i = 0; i < n; i++) {
-        scanf("%d", &temp);
-        if(hash[H(temp)] == 0) {
-            hash[H(temp)] = temp;
-            printf("%d", H(temp));
-        } else {
-            flag = false;
-            for(int k = 1; k <= Tsize / 2; k++) {
-                int h = H(temp) + k * k;
-                if(h >= Tsize)
-                    h = h % Tsize;
-                if(hash[h] == 0) {
-                    hash[h] = temp;
-                    flag = true;
-                    break;
-                }
+        scanf("%d", &key);
+        int hkey = key % Tsize;
+        int k;
+        for(k = 0; k < Tsize; k++) {
+            int pos = (hkey + k * k) % Tsize;
+            if(h[pos] == 0) {
+                h[pos] = key;
+                printf("%d", pos);
+                break;
             }
-            if(flag == true)
-                printf("%d");
-            else
-                printf("-");
         }
+        if(k >= Tsize)
+            printf("-");
         if(i != n - 1)
             printf(" ");
     }
