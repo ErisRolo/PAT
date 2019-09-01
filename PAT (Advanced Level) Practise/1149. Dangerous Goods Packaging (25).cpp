@@ -1,27 +1,41 @@
+/**
+* 分析：注意在线处理，否则容易TLE
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
+const int maxn = 100000;
+
+int n, m, a, b, k;
+vector<int> g[maxn];
+bool flag;
+bool vis[maxn];
+
 
 int main() {
-    int n, k, t1, t2;
-    map<int, vector<int>> m;
-    scanf("%d%d", &n, &k);
-    for (int i = 0; i < n; i++) {
-        scanf("%d%d", &t1, &t2);
-        m[t1].push_back(t2);
-        m[t2].push_back(t1);
+    scanf("%d%d", &n, &m);
+    for(int i = 0; i < n; i++) {
+        scanf("%d%d", &a, &b);
+        g[a].push_back(b);
+        g[b].push_back(a);
     }
-    while (k--) {
-        int cnt, flag = 0, a[100000] = {0};
-        scanf("%d", &cnt);
-        vector<int> v(cnt);
-        for (int i = 0; i < cnt; i++) {
-            scanf("%d", &v[i]);
-            a[v[i]] = 1;
+    while(m--) {
+        flag = true;
+        fill(vis, vis + maxn, false);
+        scanf("%d", &k);
+        for(int i = 0; i < k; i++) {
+            scanf("%d", &a);
+            if(vis[a] == false) {
+                vis[a] = true;
+                for(auto b : g[a])
+                    vis[b] = true;
+            } else
+                flag = false;
         }
-        for (int i = 0; i < v.size(); i++)
-            for (int j = 0; j < m[v[i]].size(); j++)
-                if (a[m[v[i]][j]] == 1) flag = 1;
-        printf("%s\n", flag ? "No" : "Yes");
+        if(flag)
+            printf("Yes\n");
+        else
+            printf("No\n");
     }
     return 0;
 }
