@@ -1,8 +1,7 @@
 /**
-* 分析：写了太长时间了，仿照中序递归建树的写法写的，但是递归边界不一样，具体处理不一样
-*       唯一相同的就是划分子区域差不多，但也要修改
-*       判断是否唯一就是判断子树结点数目是否为2，或者说该结点是否只有1个孩子
-*       这题虽然自己A了，但还是多看看别人的做法
+* 分析：划分区域是在后序序列中找先序序列根结点后面那一个点，这个点以左（包括这个点）为左子树，以右为右子树
+*       注意计算左子树结点数目numleft时与中序建树不同，直接在循环里自增
+*       判断是否唯一就是判断子树结点数目是否为2，或者说该结点是否只有1个孩子，建每棵树前利用区间确定子树结点数目进行判断
 **/
 
 #include <bits/stdc++.h>
@@ -18,35 +17,26 @@ struct Node {
 } node[maxn];
 
 int create(int prel, int prer, int postl, int postr) {
-    //cout<<"prel="<<prel<<" prer="<<prer<<" postl="<<postl<<" postr="<<postr<<endl;
+    if(prer - prel == 1 || postr - postl == 1) //  if(numleft==2||numright==2)  numleft=prer-prel+1  numright=postr-postl+1
+        isonly = false;
+    if(prel > prer)
+        return -1;
     int root = prel;
     node[root].data = pre[prel];
-    //cout<<"root="<<root<<" node[root]="<<node[root].data<<endl;
-    if(prel == prer || postl == postr) {
-        node[root].lchild = node[root].rchild = -1;
-        return root;
-    }
-    int k;
-    for(k = postl; k <= postr - 1; k++) {
+    int k, numleft = 0; //注意这里计算左子树结点数目
+    for(k = postl; k < postr; k++) {
+        numleft++;
         if(post[k] == pre[prel + 1])
             break;
     }
-    //cout<<"k="<<k<<endl;
-    int numleft = k - postl + 1;
-    int numright = postr - 1 - k;
-    if(numleft < 0 || numright < 0)
-        return -1;
-    if(numleft == 2 || numright == 2)
-        isonly = false;
-    //cout<<"numleft="<<numleft<<" numright="<<numright<<endl;
-    node[root].lchild = create(prel + 1, prel + numleft, postl, postl + numleft - 1);
-    node[root].rchild = create(prel + numleft + 1, prer, postl + numleft, postr - 1);
+    //int numleft=k-postl+1;
+    node[root].lchild = create(prel + 1, prel + numleft, postl, k);
+    node[root].rchild = create(prel + numleft + 1, prer, k + 1, postr - 1);
     return root;
 }
 
 int num = 0;
 void inOrder(int root) {
-    //cout<<"inOrder root="<<root<<endl;
     if(root == -1)
         return;
     inOrder(node[root].lchild);
@@ -66,9 +56,6 @@ int main() {
     for(int i = 0; i < n; i++)
         scanf("%d", &post[i]);
     int root = create(0, n - 1, 0, n - 1);
-    //cout<<"main root="<<root<<endl;
-    if(n == 2)
-        isonly = false; //特判
     if(isonly)
         printf("Yes\n");
     else
