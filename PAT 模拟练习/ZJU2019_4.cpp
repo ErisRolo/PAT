@@ -1,3 +1,12 @@
+/**
+* 分析：此题有多种思路，DFS，Dijkstra，Dijkstra+DFS，以救助站为起点或以派遣中心为起点
+*       第一标尺为距离，第二标尺为车数，第三标尺为路径边数，其中车数可直接获得，需要处理的为路径边数
+*       采用Dijkstra+DFS常规思路，选查询点作为起点
+*       考虑到K次查询，按照普通模板写，如果通过DFS获取路径边数，需要K次Dijkstra+K*(na+1)次DFS，时间复杂度过高
+*       因此使用Dijkstra选择最优路径，Dijkstra获取最短距离和路径边数，车数直接获取，DFS只打印路径，如此只需要K次Dijkstra+K次DFS
+*       最后在main函数中根据条件选择最优终点即可，此时要处理所有条件，处理完毕后DFS打印路径即可
+**/
+
 #include <bits/stdc++.h>
 using namespace std;
 const int maxn = 1020;
@@ -41,7 +50,7 @@ void Dijkstra(int s) {
                     pre[v].clear();
                     pre[v].push_back(u);
                     q.push(v);
-                } else if(d[u] + adj[u][j].dis == d[v] && str[u] + 1 < str[v]) {
+                } else if(d[u] + adj[u][j].dis == d[v] && str[u] + 1 <= str[v]) {
                     str[v] = str[u] + 1;
                     pre[v].push_back(u);
                     q.push(v);
@@ -63,7 +72,7 @@ void DFS(int v) {
             if(i != path.size() - 1)
                 printf(" ");
         }
-        printf("\n%d\n", d[path[0] - ns]);
+        printf("\n%d\n", d[path[0]]);
         path.pop_back();
         return;
     }
@@ -115,7 +124,7 @@ int main() {
                     ans = ns + i;
                     maxcar = car[ns + i];
                     minstr = str[ns + i];
-                } else if(d[ns + i] == mindis && car[ns + i] == maxcar && str[ns + i] < minstr) {
+                } else if(d[ns + i] == mindis && car[ns + i] == maxcar && str[ns + i] <= minstr) {
                     ans = ns + i;
                     minstr = str[ns + i];
                 }
@@ -129,6 +138,30 @@ int main() {
     }
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -299,6 +332,43 @@ int main() {
 //	}
 //	return 0;
 //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
