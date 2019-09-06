@@ -1,4 +1,82 @@
-///**
+/**
+* 分析：发现一种建树可以肯定A的做法，就是建树的时候注意下需要递归建树，插入建树会超时
+**/
+
+#include <bits/stdc++.h>
+using namespace std;
+const int maxn = 10001;
+
+int m, n, x, a, b, root = -1;
+int pre[maxn], in[maxn];
+unordered_map<int, int> id; //存储结点在数组中的下标
+unordered_map<int, bool> mp; //标记结点是否存在
+
+struct Node {
+    int data, lchild, rchild;
+    int parent, level;
+} node[maxn];
+
+int create(int prel, int prer, int inl, int inr, int parent, int level) {
+    if(prel > prer)
+        return -1;
+    int root = prel;
+    node[root].data = pre[prel];
+    node[root].parent = parent;
+    node[root].level = level;
+    id[node[root].data] = root;
+    int k;
+    for(k = inl; k <= inr; k++) {
+        if(in[k] == pre[prel])
+            break;
+    }
+    int numleft = k - inl;
+    node[root].lchild = create(prel + 1, prel + numleft, inl, k - 1, root, level + 1);
+    node[root].rchild = create(prel + numleft + 1, prer, k + 1, inr, root, level + 1);
+    return root;
+}
+
+int LCA(int a, int b) { //参数为结点下标
+    if(a == b)
+        return a;
+    if(node[a].level > node[b].level)
+        LCA(node[a].parent, b);
+    else
+        LCA(a, node[b].parent);
+}
+
+int main() {
+    scanf("%d%d", &m, &n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        pre[i] = in[i] = x;
+        mp[x] = true;
+    }
+    sort(in, in + n);
+    root = create(0, n - 1, 0, n - 1, -1, 0);
+    while(m--) {
+        scanf("%d%d", &a, &b);
+        if(mp.find(a) != mp.end() && mp.find(b) != mp.end()) {
+            int anc = node[LCA(id[a], id[b])].data;
+            if(anc != a && anc != b)
+                printf("LCA of %d and %d is %d.\n", a, b, anc);
+            else
+                printf("%d is an ancestor of %d.\n", anc, anc == a ? b : a);
+        } else {
+            if(mp.find(a) == mp.end() && mp.find(b) == mp.end())
+                printf("ERROR: %d and %d are not found.\n", a, b);
+            if(mp.find(a) != mp.end() && mp.find(b) == mp.end())
+                printf("ERROR: %d is not found.\n", b);
+            if(mp.find(a) == mp.end() && mp.find(b) != mp.end())
+                printf("ERROR: %d is not found.\n", a);
+        }
+    }
+    return 0;
+}
+
+
+
+
+//**
 //* 分析：给BST，找LCA，一开始在输入的时候，选择先判断大小，交换次序输出，结果只有19分
 //*       debug发现一开始的写法，总是认为较大的数可能为根结点，是被样例那个只有左孩子的子树误导了，但如果出现只有右孩子的子树就会出错
 //*       所以i应该>=a或者<=b，改正后为20分，debug发现结果对了但输出有错，继续改正，得29分
@@ -68,14 +146,6 @@
 //    }
 //    return 0;
 //}
-
-
-
-
-
-
-
-
 
 
 
