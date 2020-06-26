@@ -8,8 +8,6 @@
 
 现已施工完毕
 
-即将补充Java版本解题代码
-
 ### :pencil2: STL
 
 - [map](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
