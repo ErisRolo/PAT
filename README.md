@@ -8,8 +8,6 @@
 
 现已施工完毕
 
-ZJU || SEU
-
 ### :pencil2: STL
 
 - [map](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
