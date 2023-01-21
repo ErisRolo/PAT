@@ -8,6 +8,8 @@
 
 在此记录2023每日一题（包括PAT旧题N刷和THU算协对应LC题目）  2/365 今年能不能上岸呢
 
+新的一年 所得皆所愿 所遇皆所求！
+
 ### :pencil2: STL
 
 - [map](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
