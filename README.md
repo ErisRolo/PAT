@@ -8,8 +8,6 @@
 
 在此记录2023每日一题（包括PAT旧题N刷和THU算协对应LC题目）  2/365
 
-一会好运！
-
 ### :pencil2: STL
 
 - [map](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
