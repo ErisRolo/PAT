@@ -1,38 +1,51 @@
-/**
-* ·ÖÎö£ºA+B=C,»õ±Ò½øÖÆ×ª»»£¬Ö±½Ó·­ÒëµÄ£¬ÓÖĞ´Âé·³ÁË£¬²»ÓÃ½á¹¹Ìå¡£¡£¡£
-*       Ö±½ÓÓÃÈı¸ö´óĞ¡Îª3µÄÒ»Î¬Êı×é¾ÍĞĞ£¬ÕâÑù»ñµÃ½á¹ûÒ²¿ÉÒÔÖ±½ÓÈ¡Óà£¬²»ÓÃtempÔİ´æÊı¾İ
-*       ÕâÌâ¼òµ¥ÔõÃ´×ö¶¼ĞĞ²»Éî¾¿ÁËÒâÒå²»´ó¡£¡£¡£
-**/
-
-#include <cstdio>
-
-struct current {
-    int galleon;
-    int sickle;
-    int knut;
-};
+#include <bits/stdc++.h>
+using namespace std;
 
 int main() {
-    current coin;
-    int galleon, sickle, knut;
-    scanf("%d.%d.%d", &galleon, &sickle, &knut);
-    coin.galleon = galleon;
-    coin.sickle = sickle;
-    coin.knut = knut;
-    scanf("%d.%d.%d", &galleon, &sickle, &knut);
-    coin.knut += knut;
-    if(coin.knut >= 29) {
-        int temp = coin.knut;
-        coin.knut = coin.knut % 29;
-        coin.sickle += temp / 29;
-    }
-    coin.sickle += sickle;
-    if(coin.sickle >= 17) {
-        int temp = coin.sickle;
-        coin.sickle = coin.sickle % 17;
-        coin.galleon += temp / 17;
-    }
-    coin.galleon += galleon;
-    printf("%d.%d.%d", coin.galleon, coin.sickle, coin.knut);
+    int a, b, c, A, B, C, ra, rb, rc;
+    scanf("%d.%d.%d %d.%d.%d", &a, &b, &c, &A, &B, &C);
+    rc = (c + C) % 29;
+    rb = ((c + C) / 29 + b + B) % 17;
+    ra = ((c + C) / 29 + b + B) / 17 + a + A;
+    printf("%d.%d.%d", ra, rb, rc);
     return 0;
 }
+
+// /**
+//  * åˆ†æï¼šA+B=C,è´§å¸è¿›åˆ¶è½¬æ¢ï¼Œç›´æ¥ç¿»è¯‘çš„ï¼Œåˆå†™éº»çƒ¦äº†ï¼Œä¸ç”¨ç»“æ„ä½“ã€‚ã€‚ã€‚
+//  *       ç›´æ¥ç”¨ä¸‰ä¸ªå¤§å°ä¸º3çš„ä¸€ç»´æ•°ç»„å°±è¡Œï¼Œè¿™æ ·è·å¾—ç»“æœä¹Ÿå¯ä»¥ç›´æ¥å–ä½™ï¼Œä¸ç”¨tempæš‚å­˜æ•°æ®
+//  *       è¿™é¢˜ç®€å•æ€ä¹ˆåšéƒ½è¡Œä¸æ·±ç©¶äº†æ„ä¹‰ä¸å¤§ã€‚ã€‚ã€‚
+//  **/
+
+// #include <cstdio>
+
+// struct current {
+//     int galleon;
+//     int sickle;
+//     int knut;
+// };
+
+// int main() {
+//     current coin;
+//     int galleon, sickle, knut;
+//     scanf("%d.%d.%d", &galleon, &sickle, &knut);
+//     coin.galleon = galleon;
+//     coin.sickle = sickle;
+//     coin.knut = knut;
+//     scanf("%d.%d.%d", &galleon, &sickle, &knut);
+//     coin.knut += knut;
+//     if (coin.knut >= 29) {
+//         int temp = coin.knut;
+//         coin.knut = coin.knut % 29;
+//         coin.sickle += temp / 29;
+//     }
+//     coin.sickle += sickle;
+//     if (coin.sickle >= 17) {
+//         int temp = coin.sickle;
+//         coin.sickle = coin.sickle % 17;
+//         coin.galleon += temp / 17;
+//     }
+//     coin.galleon += galleon;
+//     printf("%d.%d.%d", coin.galleon, coin.sickle, coin.knut);
+//     return 0;
+// }
