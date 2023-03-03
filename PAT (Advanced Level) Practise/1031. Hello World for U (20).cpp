@@ -1,32 +1,52 @@
-/**
-* ·ÖÎö£º´òÓ¡Í¼ĞÎ£¬¸ù¾İÌâÄ¿ÀïµÄÏŞÖÆÌõ¼şÍÆ¹«Ê½¼´¿É
-*       È»ºóÌ×¹«Ê½ËãÈı¸öÎ»ÖÃµÄ×Ö·û¸öÊı£¬¸ù¾İ¸öÊı´òÓ¡
-*       Èç¹û²»Çå³şÔõÃ´´òÓ¡¾ÍÏÈÊä³öÈı¸öÎ»ÖÃµÄÊı¾İ¿´Ò»ÏÂ
-*       ¹«Ê½ÒªĞ´¶Ô£¬²»Òª°´×Ô¼ºµÄÀí½â´Õ¹«Ê½£¬°´ÌâÄ¿À´
-**/
-
-#include <cstdio>
-#include <cstring>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
-const int maxn = 81;
 
 int main() {
-    char str[maxn];
-    cin >> str;
-    int N = strlen(str);
-    int n1, n2, n3;
-    n1 = (N + 2) / 3;
-    n3 = n1;
-    n2 = N + 2 - n1 - n3;
-    //printf("%d %d %d", n1, n2, n3);
-    for(int i = 0; i < n1 - 1; i++) {
-        printf("%c", str[i]);
-        for(int j = 0; j < n2 - 2; j++)
-            printf(" ");
-        printf("%c\n", str[N - i - 1]);
+    string s;
+    cin >> s;
+    int n = s.size(), n1, n2;
+    n1 = (n + 2) / 3 - 1;
+    n2 = n - 2 * n1;
+    for (int i = 0; i < n1; i++) {
+        cout << s[i];
+        for (int j = 0; j < n2 - 2; j++)
+            cout << " ";
+        cout << s[n - i - 1] << endl;
     }
-    for(int i = 0; i < n2; i++)
-        printf("%c", str[n1 + i - 1]);
+    for (int i = 0; i < n2; i++)
+        cout << s[i + n1];
     return 0;
 }
+
+// /**
+//  * åˆ†æï¼šæ‰“å°å›¾å½¢ï¼Œæ ¹æ®é¢˜ç›®é‡Œçš„é™åˆ¶æ¡ä»¶æ¨å…¬å¼å³å¯
+//  *       ç„¶åå¥—å…¬å¼ç®—ä¸‰ä¸ªä½ç½®çš„å­—ç¬¦ä¸ªæ•°ï¼Œæ ¹æ®ä¸ªæ•°æ‰“å°
+//  *       å¦‚æœä¸æ¸…æ¥šæ€ä¹ˆæ‰“å°å°±å…ˆè¾“å‡ºä¸‰ä¸ªä½ç½®çš„æ•°æ®çœ‹ä¸€ä¸‹
+//  *       å…¬å¼è¦å†™å¯¹ï¼Œä¸è¦æŒ‰è‡ªå·±çš„ç†è§£å‡‘å…¬å¼ï¼ŒæŒ‰é¢˜ç›®æ¥
+//  **/
+
+// #include <cstdio>
+// #include <cstring>
+// #include <iostream>
+// using namespace std;
+// const int maxn = 81;
+
+// int main() {
+//     char str[maxn];
+//     cin >> str;
+//     int N = strlen(str);
+//     int n1, n2, n3;
+//     n1 = (N + 2) / 3;
+//     n3 = n1;
+//     n2 = N + 2 - n1 - n3;
+//     // printf("%d %d %d", n1, n2, n3);
+//     for (int i = 0; i < n1 - 1; i++) {
+//         printf("%c", str[i]);
+//         for (int j = 0; j < n2 - 2; j++)
+//             printf(" ");
+//         printf("%c\n", str[N - i - 1]);
+//     }
+//     for (int i = 0; i < n2; i++)
+//         printf("%c", str[n1 + i - 1]);
+//     return 0;
+// }
