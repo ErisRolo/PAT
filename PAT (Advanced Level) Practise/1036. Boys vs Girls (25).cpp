@@ -1,51 +1,93 @@
 /**
-* ·ÖÎö£ºÒªÇóÊä³ö³É¼¨×î¸ßµÄÅ®ÉúµÄĞÅÏ¢ºÍ³É¼¨×îµÍµÄÄĞÉúµÄĞÅÏ¢£¬ÒÔ¼°ËûÃÇµÄ³É¼¨²îÖµ
-*       Ê×ÏÈ½«ËùÓĞÈË°´´ÓÅ®µ½ÄĞ£¬³É¼¨´Ó¸ßµ½µÍÅÅĞò£¬ÔòµÚÒ»¸ö¾ÍÊÇ³É¼¨×î¸ßµÄÅ®Éú£¬×îºóÒ»¸ö¾ÍÊÇ³É¼¨×îµÍµÄÄĞÉú
-*       Ñ­»·Í³¼ÆĞÔ±ğÊıÁ¿À´·Ö³ÉÈıÖÖÇé¿ö£ºÈ«Å®¡¢È«ÄĞ¡¢ÓĞÄĞÓĞÅ®£¬°´²»Í¬µÄÇé¿öÊä³ö¼´¿É
-*       ´ËÌâ×¢ÒâÊä³ö¸ñÊ½£¬ÈÏÕæÉóÌâ£¬Òª×ĞÏ¸£¡£¡£¡
-**/
-
-#include <cstdio>
-#include <algorithm>
-#include <iostream>
+ * åˆ†æï¼šä¸è¦åŠ¨ä¸åŠ¨å°±æ’åºï¼Œèƒ½è¾¹è¾“å…¥è¾¹æ¯”è¾ƒå°±ä¸è¦æ’åº
+ **/
+#include <bits/stdc++.h>
 using namespace std;
 
-struct student {
-    char name[11];
-    char gender; //F or M
-    char id[11];
-    int score;
-};
-
-//°´´ÓÅ®µ½ÄĞ£¬³É¼¨´Ó¸ßµ½µÍµÄË³ĞòÅÅÁĞ
-bool cmp(student stu1, student stu2) {
-    if(stu1.gender != stu2.gender)
-        return stu1.gender < stu2.gender;
-    else if(stu1.score != stu2.score)
-        return stu1.score > stu2.score;
-}
-
 int main() {
-    int N, fName, fId, mName, mId;
-    int gender = 0;
-    scanf("%d", &N);
-    student stu[N];
-    for(int i = 0; i < N; i++) {
-        scanf("%s %c %s %d", stu[i].name, &stu[i].gender, stu[i].id, &stu[i].score);
+    int n, d, maxm = -1, minm = 101;
+    string a, b, c, fa, fc, ma, mc;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        cin >> a >> b >> c;
+        scanf("%d", &d);
+        if (b == "M") {
+            if (d < minm) {
+                minm = d;
+                ma = a;
+                mc = c;
+            }
+        } else {
+            if (d > maxm) {
+                maxm = d;
+                fa = a;
+                fc = c;
+            }
+        }
     }
-    for(int i = 0; i < N; i++) {
-        if(stu[i].gender == 'F')
-            gender++;
-    }
-    if(gender == N)
-        printf("%s %s\nAbsent\nNA", stu[0].name, stu[0].id); //È«ÎªÅ®ĞÔ
-    else if(gender == 0)
-        printf("Absent\n%s %s\nNA", stu[N - 1].name, stu[N - 1].id); //È«ÎªÄĞĞÔ
-    else {
-        sort(stu, stu + N, cmp);
-        printf("%s %s\n%s %s\n%d", stu[0].name, stu[0].id,
-               stu[N - 1].name, stu[N - 1].id,
-               stu[0].score - stu[N - 1].score);
-    }
+    if (maxm == -1)
+        cout << "Absent" << endl;
+    else
+        cout << fa << " " << fc << endl;
+    if (minm == 101)
+        cout << "Absent" << endl;
+    else
+        cout << ma << " " << mc << endl;
+    if (maxm == -1 || minm == 101)
+        cout << "NA";
+    else
+        cout << maxm - minm;
     return 0;
 }
+
+// /**
+//  * åˆ†æï¼šè¦æ±‚è¾“å‡ºæˆç»©æœ€é«˜çš„å¥³ç”Ÿçš„ä¿¡æ¯å’Œæˆç»©æœ€ä½çš„ç”·ç”Ÿçš„ä¿¡æ¯ï¼Œä»¥åŠä»–ä»¬çš„æˆç»©å·®å€¼
+//  *       é¦–å…ˆå°†æ‰€æœ‰äººæŒ‰ä»å¥³åˆ°ç”·ï¼Œæˆç»©ä»é«˜åˆ°ä½æ’åºï¼Œåˆ™ç¬¬ä¸€ä¸ªå°±æ˜¯æˆç»©æœ€é«˜çš„å¥³ç”Ÿï¼Œæœ€åä¸€ä¸ªå°±æ˜¯æˆç»©æœ€ä½çš„ç”·ç”Ÿ
+//  *       å¾ªç¯ç»Ÿè®¡æ€§åˆ«æ•°é‡æ¥åˆ†æˆä¸‰ç§æƒ…å†µï¼šå…¨å¥³ã€å…¨ç”·ã€æœ‰ç”·æœ‰å¥³ï¼ŒæŒ‰ä¸åŒçš„æƒ…å†µè¾“å‡ºå³å¯
+//  *       æ­¤é¢˜æ³¨æ„è¾“å‡ºæ ¼å¼ï¼Œè®¤çœŸå®¡é¢˜ï¼Œè¦ä»”ç»†ï¼ï¼ï¼
+//  **/
+
+// #include <algorithm>
+// #include <cstdio>
+// #include <iostream>
+// using namespace std;
+
+// struct student {
+//     char name[11];
+//     char gender;  // F or M
+//     char id[11];
+//     int score;
+// };
+
+// //æŒ‰ä»å¥³åˆ°ç”·ï¼Œæˆç»©ä»é«˜åˆ°ä½çš„é¡ºåºæ’åˆ—
+// bool cmp(student stu1, student stu2) {
+//     if (stu1.gender != stu2.gender)
+//         return stu1.gender < stu2.gender;
+//     else if (stu1.score != stu2.score)
+//         return stu1.score > stu2.score;
+// }
+
+// int main() {
+//     int N, fName, fId, mName, mId;
+//     int gender = 0;
+//     scanf("%d", &N);
+//     student stu[N];
+//     for (int i = 0; i < N; i++) {
+//         scanf("%s %c %s %d", stu[i].name, &stu[i].gender, stu[i].id, &stu[i].score);
+//     }
+//     for (int i = 0; i < N; i++) {
+//         if (stu[i].gender == 'F')
+//             gender++;
+//     }
+//     if (gender == N)
+//         printf("%s %s\nAbsent\nNA", stu[0].name, stu[0].id);  //È«ÎªÅ®ï¿½ï¿½
+//     else if (gender == 0)
+//         printf("Absent\n%s %s\nNA", stu[N - 1].name, stu[N - 1].id);  //È«Îªï¿½ï¿½ï¿½ï¿½
+//     else {
+//         sort(stu, stu + N, cmp);
+//         printf("%s %s\n%s %s\n%d", stu[0].name, stu[0].id,
+//                stu[N - 1].name, stu[N - 1].id,
+//                stu[0].score - stu[N - 1].score);
+//     }
+//     return 0;
+// }
