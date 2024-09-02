@@ -6,10 +6,6 @@
 
 现已施工完毕
 
-机试突击复习（包括PAT旧题N刷和THU算协对应LC题目）
-
-目标机试满分！（不怕立flag冲冲冲！
-
 ### :pencil2: STL
 
 - [map](https://github.com/ErisRolo/PAT/blob/master/PAT%20常用模板总结/map.md)
